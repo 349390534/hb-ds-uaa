@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="wireless">
+	<cacheModel type="LRU" id="lruCache" readOnly="true" serialize="true">
+	   <flushInterval hours="168"/>
+      <!--  <flushOnExecute statement="selectEventAccount"/>
+       <flushOnExecute statement="selectEventAccountAll"/>
+       <flushOnExecute statement="selectEventAccountAllDetail"/>
+       <flushOnExecute statement="countAll"/> -->
+       <property name="size" value="200"/>
+	</cacheModel>
+
+	<typeAlias alias="channelEventAccount" type="com.howbuy.uaa.persistence.ChannelEventAccount"/>
+	<sql id="selectAccount">
+		SELECT t.proid,
+		       t.outletcode,
+		       t.activate_num activateNum,
+		       t.openacc_num openaccNum,
+		       t.bindcard_num bindcardNum,
+		       t.order_num orderNum,
+		       t.order_amount orderAmount,
+		       t.create_time createTime
+		     FROM channel_event_account t
+	</sql>
+	
+	<select id="selectEventAccount" parameterClass="java.util.HashMap" resultClass="channelEventAccount" cacheModel="lruCache">
+		<include refid="selectAccount"/>
+	 	<dynamic prepend="WHERE">
+	 		<isNotNull prepend="AND" property="startTime">
+				 t.create_time >#startTime#
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="endTime">
+				 t.create_time <![CDATA[<=]]> #endTime#
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="proid">
+				  t.proid IN
+				 <iterate conjunction="," open="(" close=")" property="proid">  
+				 	#proid[]#
+				 </iterate>
+	 		</isNotNull>
+	 		<isNotNull property="outletcode">
+	 			<isNotEqual prepend="AND" property="outletcode" compareValue="-1">
+					 t.outletcode = #outletcode#
+	 			</isNotEqual>
+	 			<isEqual prepend="AND" property="outletcode" compareValue="-1">
+	 				 t.outletcode != #outletcode#
+	 			</isEqual>
+	 		</isNotNull>
+	 	</dynamic>
+		<!-- ORDER BY t.create_time DESC -->
+	</select>
+	
+	<select id="selectEventAccountAll" parameterClass="java.util.HashMap" resultClass="channelEventAccount" cacheModel="lruCache">
+	  	<include refid="selectAccount"/>
+	 	<dynamic prepend="WHERE">
+	 		<isNotNull prepend="AND" property="startTime">
+				 t.create_time >#startTime#
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="endTime">
+				 t.create_time <![CDATA[<=]]> #endTime#
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="proid">
+				 t.proid IN
+				 <iterate conjunction="," open="(" close=")" property="proid">  
+				 	#proid[]#
+				 </iterate>
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="outletcode">
+				 t.outletcode = #outletcode#
+	 		</isNotNull>
+	 	</dynamic>
+	</select>
+	<!-- 查询单个平台数据汇总明细 -->
+	<select id="selectEventAccountAllDetail" parameterClass="java.util.HashMap" resultClass="channelEventAccount" cacheModel="lruCache">
+		SELECT t.create_time createTime,
+		   SUM(t.activate_num) activateNum,
+	       SUM(t.openacc_num) openaccNum,
+	       SUM(t.bindcard_num) bindcardNum,
+	       SUM(t.order_amount) orderAmount,
+	       SUM(t.order_num) orderNum
+	  	FROM channel_event_account t 
+	 	<dynamic prepend="WHERE">
+	 		<isNotNull prepend="AND" property="startTime">
+				 t.create_time >#startTime#
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="endTime">
+				 t.create_time <![CDATA[<=]]> #endTime#
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="proid">
+				 t.proid IN
+				 <iterate conjunction="," open="(" close=")" property="proid">  
+				 	#proid[]#
+				 </iterate>
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="outletcode">
+				 t.outletcode = #outletcode#
+	 		</isNotNull>
+	 	</dynamic>
+		GROUP BY t.create_time
+		ORDER BY t.create_time ASC
+	</select>
+	<select id="countAll" parameterClass="java.util.HashMap" resultClass="channelEventAccount" cacheModel="lruCache">
+		SELECT SUM(t.activate_num) activateNum,
+       SUM(t.openacc_num) openaccNum,
+       SUM(t.bindcard_num) bindcardNum,
+       SUM(t.order_num) orderNum,
+       SUM(t.order_amount) orderAmount
+  		FROM channel_event_account t
+	   <dynamic prepend="WHERE">
+	 		<isNotNull prepend="AND" property="startTime">
+				 t.create_time >#startTime#
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="endTime">
+				 t.create_time <![CDATA[<=]]> #endTime#
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="proid">
+				 t.proid IN
+				 <iterate conjunction="," open="(" close=")" property="proid">
+				 #proid[]#
+				 </iterate>
+	 		</isNotNull>
+	 		<isNotNull prepend="AND" property="outletcode">
+				 t.outletcode = #outletcode#
+	 		</isNotNull>
+	 	</dynamic>
+	</select>
+</sqlMap>

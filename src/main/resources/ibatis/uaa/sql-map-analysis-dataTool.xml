@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AnalysisDataTool">
+	<typeAlias alias="RouteManageCommand" type="com.howbuy.uaa.command.RouteManageCommand"/>
+	<typeAlias alias="RouteDetail" type="com.howbuy.uaa.dto.RouteDetailDto"/>
+	
+	<select id="queryRouteInfoList" parameterClass="java.util.HashMap" resultClass="RouteManageCommand">
+		SELECT 
+			id as id,
+			name as routeName,
+			account as account,
+			level as level,
+			parent as parentId,
+			tag_code as tagCode,
+			qid as qid,
+			mark as mark,
+			create_date_time as createDate
+			FROM route_info
+			WHERE mark = 1
+			<isNotEmpty prepend="and"  property ="parentId">
+				parent = #parentId#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="level">
+				level = #level#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="parentTag">
+				parent_tag = #parentTag#
+			</isNotEmpty>
+	</select>
+	
+	<select id="queryAllRoute" parameterClass="java.util.HashMap" resultClass="RouteManageCommand">
+		SELECT 
+			id as id,
+			name as routeName,
+			account as account,
+			level as level,
+			parent as parentId,
+			tag_code as tagCode,
+			qid as qid,
+			channel_type as channelType,
+			create_date_time as createDate
+		FROM
+			route_info
+		WHERE
+			<isNotEmpty property = "parent">
+			parent = #parent# and 
+			</isNotEmpty>
+			level = #level#
+			<isNotEmpty prepend="AND" property = "channelType">
+			<isNotEqual property="channelType" compareValue="0">
+				channel_type = #channelType#
+			</isNotEqual>
+			</isNotEmpty>
+			and mark = 1
+	</select>
+	
+	
+	<select id="queryCountAllRoute" parameterClass="java.util.HashMap" resultClass="int">
+		SELECT COUNT(1)
+		FROM route_info
+		WHERE 
+			<isNotEmpty property = "parent">
+			parent = #parent# and 
+			</isNotEmpty>
+			level = #level#
+		
+	</select>
+	
+	
+	<insert id="insertRoute" parameterClass="java.util.HashMap">
+		INSERT INTO route_info 
+		(
+			name,
+			level,
+			<isNotEmpty property = "parentId">
+			parent,
+			</isNotEmpty>
+			<isNotEmpty property = "Account">
+			account,
+			</isNotEmpty>
+			qid,
+			tag_code,
+			channel_type,
+			create_date_time
+		)
+		VALUES
+		(
+			#routeName#,
+			#level#,
+			<isNotEmpty property = "parentId">
+			#parentId#,
+			</isNotEmpty>
+			<isNotEmpty property = "Account">
+			#Account#,
+			</isNotEmpty>
+			#qid#,
+			#tagCode#,
+			#channelType#,
+			#createDate#
+		)
+		<selectKey resultClass="int" keyProperty="id" >  
+          SELECT @@IDENTITY AS id  
+    	</selectKey>
+	</insert>
+	
+	
+	<update id="changeRoute" parameterClass="java.util.HashMap">
+		UPDATE route_info
+		SET
+			name = #routeName#,
+			<isNotEmpty property = "Account">
+			account = #Account#,
+			</isNotEmpty>
+			create_date_time = #createDate#
+		WHERE
+			id = #id#
+	</update>
+	
+	
+	<select id="queryRouteDetail" parameterClass="java.util.HashMap" resultClass="RouteDetail">
+		SELECT 
+			A.refid as refId,
+			A.htag as htag,
+			A.remark as remark,
+			B.create_date_time as createDate,
+			B.account as account
+		FROM
+			route_info_detail A JOIN route_info B on A.refid = B.id
+		WHERE
+			refid = #id#
+	</select>
+	<select id="queryRouteDetail1" parameterClass="java.util.HashMap" resultClass="RouteDetail">
+		select
+			D.htag as htag,
+			D.route_detail as routeDetail,
+			D.refid as refId
+		from 
+			route_info A join route_info B JOIN route_info C JOIN route_info_detail D
+		ON 
+			B.parent = A.id and C.parent = B.id and D.refid = C.id
+		where 
+			A.qid = #id1# 
+			and B.qid = #id2# 
+			and C.qid = #id3#
+	</select>
+	
+	
+	
+	<insert id="insertRouteDetail" parameterClass="java.util.HashMap">
+		INSERT INTO route_info_detail
+		(
+			route_detail,
+			htag,
+			refid
+		)
+		VALUES
+		(
+			#routeDetail#,
+			#htag#,
+			#id#
+		)
+	</insert>
+	
+	<select id="queryListTrendDetail" parameterClass="java.util.HashMap" resultClass="RouteManageCommand">
+		select id AS id, create_date_time AS createDate,name AS routeName,level AS level,parent AS parentId,qid
+		FROM route_info  
+		ORDER BY $orderbyfd$ $orderfd$
+		LIMIT #startrow#,#rows#
+		
+	</select>
+	
+	<select id = "queryRowsOfTrendDetail" resultClass="int">
+		SELECT COUNT(1) from route_info
+	</select>
+	
+</sqlMap>

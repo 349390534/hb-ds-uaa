@@ -1,0 +1,66 @@
+@charset "utf-8";
+/*	@Created by yuchunming
+	@Upload date: --
+*/
+body{text-align:left;background:#f1f4f7;font:12px "微软雅黑","宋体","Arial Narrow",HELVETICA;color: #333;}
+body,div,form,img,ul,li,p,h1,h2,h3,h4,h5,h6,dl,dt,dd,fieldset,legend,input,textarea,select,table,td {margin:0; padding:0;}
+input{ font-family:"微软雅黑";}
+img {border:0;outline: none;}
+li{ list-style-type:none;cursor: pointer;}
+textarea {resize:none;}
+.clear{ clear: both; line-height:0px; height:0px; font-size:0px; visibility:hidden;}
+.clearfix:after{content:"."; display:block; height: 0; clear: both; visibility:hidden;}
+.clearfix {*zoom:1;}
+
+/* color */
+.cRed{ color:#C00;}
+.cGreen{ color:#080;}
+.cBlue {color:#2a5894;}
+.cGray6 {color:#666;}
+.cGray9 {color:#999;}
+.cOrange {color:#f80;}
+.cBlack {color: #333;}
+
+/* 默认超链样式 */
+a{ color:#2a5894; text-decoration: none;}
+a:hover{ color: #C00; text-decoration: underline;}
+
+.ftArial{font-family:Arial, Helvetica, sans-serif,"宋体";}
+.ftYahei {font-family: "微软雅黑","宋体";}
+.ftBold {font-weight:bold;}
+.ftNm {font-weight: normal;}
+.ft12 {font-size: 12px;}
+.ft14 {font-size: 14px;}
+.ft16 {font-size: 16px;}
+.fl {float:left;}
+.fr {float:right;}
+.hide {display: none;}
+.show {display: block;}
+table {border-collapse: collapse;width: 100%;text-align: center;}
+
+/*火狐下input按钮不支持行高line-height fix*/
+input[type="reset"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+input[type="file"] > input[type="button"]::-moz-focus-inner{border:none;padding:0;}
+input::-ms-clear{display:none;}/*隐蔽文本框叉子*/
+input::-ms-reveal{display:none;}/*隐蔽暗码框小眼睛*/
+
+/*自定义*/
+.w1000 {width: 1000px;}
+.mt10 {margin-top: 10px;}
+.mt20 {margin-top: 20px;}
+.mt25 {margin-top: 25px;}
+.mt30 {margin-top: 30px;}
+.ml0 {margin-left: 0 !important;}
+.mr0 {margin-right: 0 !important;}
+.ml20 {margin-left: 20px;}
+.tdl {text-align: left;}
+.tdr {text-align: right;}
+.vat{vertical-align: top;}
+.vab{vertical-align: bottom;}
+/*input style*/
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	input {line-height: normal !important;}/*处理chrome 光标偏上的问题*/
+ }
+

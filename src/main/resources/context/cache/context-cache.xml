@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+	"http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<!-- spy memcached client -->
+	<!--
+	<bean id="spy.memcachedClientFactoryBean" class="net.spy.memcached.spring.MemcachedClientFactoryBean">
+		<property name="servers" value="192.168.106.201:11211" />
+		<property name="opTimeout" value="1000" />
+			<property name="protocol" value="BINARY"/>
+			<property name="transcoder">
+			<bean class="net.spy.memcached.transcoders.SerializingTranscoder">
+			<property name="compressionThreshold" value="1024"/>
+			</bean>
+			</property>
+			<property name="timeoutExceptionThreshold" value="1998"/>
+			<property name="hashAlg" value="KETAMA_HASH"/>
+			<property name="locatorType" value="CONSISTENT"/>
+			<property name="failureMode" value="Redistribute"/>
+			<property name="useNagleAlgorithm" value="false"/>
+	</bean>
+
+	<bean id="spy.cacheClient" class="com.howbuy.web.cache.SpyMemcachedClient"	factory-method="createInstance">
+		<constructor-arg ref="memcachedClientFactoryBean" />
+  		<constructor-arg value="60" />
+	</bean>
+	 -->
+	<!-- danga memcached client -->
+
+	<!-- xmemcachedClient配置 -->
+	<bean name="xmemcachedClient"
+                class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
+                <property name="servers">
+                        <value>192.168.106.201:11211</value>
+                </property>
+                <!-- nio connection pool size -->
+                <property name="connectionPoolSize" value="1"></property>
+                <!-- Serializing transcoder -->
+                <property name="transcoder">
+                	<bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" />
+				</property>
+   </bean>
+
+	<bean id="ehCacheClient" class="com.howbuy.bizservice.cache.EhCacheClient" factory-method="createInstance">
+		<constructor-arg><value>ehcache-cluster.xml</value></constructor-arg>
+	</bean>
+
+	<bean id="cacheManager" class="com.howbuy.bizservice.cache.CacheManager" factory-method="createInstance">
+		<property name="memcacheClient" ref="xmemcachedClient"/>
+		<property name="ehCacheClient" ref="ehCacheClient"/>
+		<property name="msgSyncCache">
+		   <value>true</value>
+		</property>
+	</bean>
+
+</beans>

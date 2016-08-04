@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserManager">
+	<typeAlias alias="user" type="com.howbuy.uaa.persistence.User"/>
+	<typeAlias alias="userRoleRelation" type="com.howbuy.uaa.persistence.UserRoleRelation"/>
+	<typeAlias alias="userPermissionRelation" type="com.howbuy.uaa.persistence.UserPermissionRelation"/>
+	<typeAlias alias="permission" type="com.howbuy.uaa.persistence.Permission"/>
+	
+	<select id="queryUserByName" parameterClass="java.util.HashMap" resultClass="user">
+		SELECT 
+			id,
+			username,
+			pwd,
+			chineseName, 
+			email,
+			telphone,   
+			status,
+			version   
+			FROM UA_USER 
+			WHERE  username = #name#
+	</select>
+	
+	<update id="updateUser" parameterClass="java.util.HashMap">
+		UPDATE UA_USER
+		SET
+			chineseName = #chineseName#,
+			email = #email#,
+			telphone = #telphone#,
+			version = version + 1 
+		WHERE
+			username = #name#
+			and version = #version#
+	</update>
+	
+	<select id="queryUserRoleRelByUserId" parameterClass="java.util.HashMap" resultClass="userRoleRelation">
+		select  
+			ap.id,
+			ap.userid,
+			ap.roleID,
+			ap.version 		
+		from UA_USER_ROLE_RELATION ap 
+		WHERE
+			 ap.userid = #userId#  
+	</select>
+	
+	<select id="queryUserPerRelByUserId" parameterClass="java.util.HashMap" resultClass="userPermissionRelation">
+		select  
+			ap.id,
+			ap.userid,
+			ap.permissionID,
+			ap.version 
+		from UA_USER_PERMISSION_RELATION ap 
+		WHERE
+			 ap.userid = #userId#  
+	</select>
+	<delete id="deleteUserRoleRelByUserId"  parameterClass="java.util.HashMap">
+      delete      
+      from UA_USER_ROLE_RELATION
+      where userid = #userId#    
+    </delete>
+    <insert id="batchSaveUserRoleRelBy" parameterClass="java.util.ArrayList">
+			INSERT INTO UA_USER_ROLE_RELATION (	
+	              roleId,
+	              userid,
+	              status,
+	              createuser
+				)
+			VALUES
+		<iterate conjunction="," property="">
+		(
+			#[].roleId#,
+			#[].userId#,
+			#[].status#,
+			#[].createUser#
+		)
+		</iterate>
+	</insert>
+	<delete id="deleteUserPerRelByUserId"  parameterClass="java.util.HashMap">
+      delete      
+      from UA_USER_PERMISSION_RELATION
+      where userid = #userId#    
+    </delete>
+    <insert id="batchSaveUserPerRel" parameterClass="java.util.ArrayList">
+			INSERT INTO UA_USER_PERMISSION_RELATION (	
+	              permissionID,
+	              userid,
+	              status,
+	              createuser
+				)
+			VALUES
+		<iterate conjunction="," property="">
+		(
+			#[].permissionId#,
+			#[].userId#,
+			#[].status#,
+			#[].createUser#
+		)
+		</iterate>
+	</insert>
+	<select id="queryRolePermissionByUserId" parameterClass="java.util.HashMap" resultClass="permission">
+		select DISTINCT p.id,
+			p.name,
+			p.descriptions,
+			p.status,
+			p.rescourcelevel,
+			p.url,
+			p.permissionid   ,
+			p.url_channel urlChannel
+	 	from UA_USER_ROLE_RELATION urr,UA_ROLE_PERMISSION rp ,UA_PERMISSION p where 
+			urr.roleid = rp.roleid 
+			and rp.permissionid = p.id 
+			and urr.userid=#userId#
+	</select>
+	
+	<select id="queryUser" parameterClass="java.util.HashMap" resultClass="user">
+		SELECT 
+			id,
+			username,
+			pwd,
+			chineseName, 
+			email,
+			telphone,   
+			status,
+			version   
+			FROM UA_USER 
+			WHERE  username = #name# and pwd=#pwd# 
+			<isNotEmpty property = "status">
+			and status=#status#
+			</isNotEmpty>
+			
+	</select>
+	
+	<select id="queryPermissionByUserId" parameterClass="java.util.HashMap" resultClass="permission">
+		select DISTINCT p.id,
+			p.name,
+			p.descriptions,
+			p.status,
+			p.rescourcelevel,
+			p.url,
+			p.permissionid,
+			p.url_channel urlChannel
+	 	from UA_PERMISSION p ,UA_USER_PERMISSION_RELATION up 
+	 	where up.permissionID = p.id and up.userid=#userId#
+	</select>
+	<select id="queryAllUser" resultClass="user">
+		SELECT 
+			id,
+			username,
+			pwd,
+			chineseName, 
+			email,
+			telphone,   
+			status,
+			version  
+			FROM UA_USER order by username		
+	</select>
+	<select id="queryUserById" parameterClass="java.util.HashMap" resultClass="user">
+		SELECT 
+			id,
+			username,
+			pwd,
+			chineseName, 
+			email,
+			telphone,   
+			status,
+			version  
+			FROM UA_USER 
+			where id=#userId#		
+	</select>
+	<select id="queryUserRoleByUserIdAndRoleId" parameterClass="java.util.HashMap" resultClass="userRoleRelation">
+		SELECT 
+			roleId,
+	              userid,
+	              status
+			FROM UA_USER_ROLE_RELATION 
+			where userid=#userId#
+			and roleId = #roleId#	
+	</select>
+	 <select id="querUserPerByUserIdAndPerId" parameterClass="java.util.HashMap" resultClass="userPermissionRelation">
+		SELECT 
+			permissionID,
+	              userid,
+	              status
+			FROM UA_USER_PERMISSION_RELATION 
+			where userid=#userId#
+			and permissionID = #perId#	
+	</select>
+	<insert id="addUser" parameterClass="java.util.HashMap">
+			INSERT INTO UA_USER (	
+	              username,
+			chineseName, 
+			email,
+			telphone,   
+			status
+				)
+			VALUES
+		
+		(
+			#userName#,
+			#chineseName#,
+			#email#,
+			#tel#,
+			#status#
+		)
+	</insert>
+	<select id="queryUserRoleById" parameterClass="java.util.HashMap" resultClass="userRoleRelation">
+		SELECT id,
+			roleId,
+	              userid,
+	              status
+			FROM UA_USER_ROLE_RELATION 
+			where id=#id#
+	</select>
+	 <select id="queryUserPerById" parameterClass="java.util.HashMap" resultClass="userPermissionRelation">
+		SELECT id,
+			permissionID,
+	              userid,
+	              status
+			FROM UA_USER_PERMISSION_RELATION 
+			where id=#id#
+	</select>
+</sqlMap>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<!--  定时任务Bean[系统自动生成] -->
+<beans>
+
+
+    <!-- web交易行为分析定时任务 -->
+    <!-- <bean id="statjob_Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="statProcessor"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+    </bean>
+
+    <bean id="queueScanerTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="statjob_Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 7 * * ?</value>
+        </property>
+    </bean> -->
+    
+    <!-- *********************howbuy 一级、二级 频道pv/uv统计 *******************************-->
+    <!-- <bean id="PVUVStat_Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="pvuvStatProcessor"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+    </bean>
+
+    <bean id="PVUVStatTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="PVUVStat_Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 1 * * ?</value>
+        </property>
+    </bean>
+     -->
+    
+    
+    
+    <!-- ********************* howbuy2ehowbuy 报表生成**********************************-->
+    
+   <!--  <bean id="Howbuy2EhowbuyStat_Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+          <ref bean="howbuy2ehowbuyStatProcessor"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+    </bean>
+
+    <bean id="Howbuy2EhowbuyStatTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="Howbuy2EhowbuyStat_Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 3 * * ?</value>
+        </property>
+    </bean> -->
+    
+    
+    <!--  url 二级频道名称 -->
+	<!-- bean id="mappingReader" class="com.howbuy.hadoop.mapping.MappingReader"> 
+		<property name="urlChannel" value="${channel_name_request_url}"/> 
+	</bean--> 
+	
+	<bean id="springContextHolder" class="com.howbuy.hadoop.utils.SpringContextHolder" /> 
+	
+	<!-- <bean id="urlMappingServiceTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
+		<property name="targetObject"> 
+			<ref bean="mappingReader"/> 
+		</property> 
+		<property name="concurrent"> 
+			<value>false</value> 
+		</property> 
+		<property name="targetMethod"> 
+			<value>reload</value> 
+		</property> 
+	</bean> 
+	
+	<bean id="urlMappingServiceTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"> 
+		<property name="jobDetail"> 
+			<ref bean="urlMappingServiceTask"/> 
+		</property> 
+		<property name="cronExpression"> 
+			<value>0 0 23 * * ?</value> 
+		</property> 
+	</bean> -->
+	
+	<!-- howbuy2ehowbuy interval 统计 10,30天转化率 -->
+	<!-- <bean id="Howbuy2EhowbuyIntervalStat_Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+          <ref bean="Howbuy2EhowbuyIntervalStat"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+    </bean>
+
+    <bean id="Howbuy2EhowbuyIntervalStatTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="Howbuy2EhowbuyIntervalStat_Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 5 * * ?</value>
+        </property>
+    </bean> -->
+	
+	 <bean id="updateChannelJob_task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="updateChannelDayJob"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+    </bean>
+    
+    <bean id="updateChannelTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="updateChannelJob_task"/>
+       	<!-- 每天6点运行一次 -->
+        <property name="cronExpression" value="0 0 6 * * ?" />
+    </bean>
+    
+	<!-- ldap数据获取 -->
+	 <bean id="ldapJob_Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="ldapDayJob"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+    </bean>
+
+    <bean id="ldapTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="ldapJob_Task"/>
+       	<!-- 每天7点运行一次 -->
+        <property name="cronExpression" value="0 0 7 * * ?" />
+    </bean>
+
+    <bean id="uaascheduler"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                 <ref bean="ldapTaskTrigger"/>
+                 <ref bean="updateChannelTaskTrigger"/>
+            </list>
+        </property>
+    </bean>
+</beans>

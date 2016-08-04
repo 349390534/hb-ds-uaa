@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="navigationMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/navigation/*.htm">navigationController</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="navigationController" class="com.howbuy.uaa.web.controller.NavigationController" init-method="init">
+    	<property name="analysisHowbuyWebsiteService" ref="analysisHowbuyWebsiteService"></property>
+    	<property name="custUrl" value="${api_report_gmtj_cust}"></property>
+    	<property name="sjhzUrl" value="${api_report_gmtj_sjhz}"></property>
+    	<property name="apiUrl" value="${api_admin_query}"></property>
+    	<property name="index" value="ftl/analysisconsole/navigation"></property>
+    	<property name="gmView" value="ftl/include/navigation_gmdata"></property>
+    	<property name="webSiteView" value="ftl/include/navigation_webdata"></property>
+    	<property name="perView" value="ftl/include/navigation_penetrate"></property>
+    </bean>
+    
+    
+</beans>

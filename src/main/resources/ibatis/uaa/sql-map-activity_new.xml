@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="activity_new">
+	<cacheModel type="LRU" id="actLRUCache" readOnly="true"
+		serialize="true">
+		<flushInterval minutes="2" />
+		<property name="size" value="20" />
+	</cacheModel>
+
+	<typeAlias alias="activityCollDataMapping" type="com.howbuy.uaa.dto.H5ActivityCollDataMapping" />
+	<typeAlias alias="activityDataMapping" type="com.howbuy.uaa.dto.H5ActivityDataMapping" />
+	  
+	<!-- 基本指标数据 -->
+	<sql id="baseViewQuota">
+	SUM(t.auth_uv) authPageUv,
+	SUM(t.hongbao_uv) hongbaoIndexUv,
+	SUM(t.kaihu_result_uv) h5OpenAccResultPageUv,
+	SUM(t.kaihu_uv) h5OpenAccIndexPageUv,
+	SUM(t.openacct_num) openaccNum,
+	SUM(t.pv) pv,
+	SUM(t.uv) uv,
+	SUM(t.enter) enter
+	</sql>
+	
+	<!-- 基础数据 -实时数据-->
+	<sql id="baseViewSql">
+	SELECT channel,
+	pv,
+	uv,
+	enter,
+	hongbao_uv,
+	kaihu_uv,
+	auth_uv,
+	kaihu_result_uv,
+	openacct_num,
+	channel_level,
+	channel_type,
+	create_time
+	FROM channel_pv_event_h5 t
+	WHERE 1=1
+	<isNotEmpty prepend="AND" property="beginTime">
+		create_time >= #beginTime#
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="endTime">
+		create_time <![CDATA[<=]]>#endTime#
+	</isNotEmpty>
+	<isNotNull prepend="AND" property="channelType">
+		channel_type = #channelType#
+	</isNotNull>
+	</sql>
+	
+	<sql id="baseViewQuotaCol">
+	   authPageUv,hongbaoIndexUv,h5OpenAccResultPageUv,
+	   h5OpenAccIndexPageUv,openaccNum,pv,uv,enter     
+	</sql>
+	
+	<!-- 实时数据当日汇总 -->
+	<select id="getH5ActivityCollData" parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+		SELECT <include refid="baseViewQuota"/> FROM (<include refid="baseViewSql"/>) t
+		<dynamic prepend="WHERE">
+			<isNull property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<!-- 汇总根级渠道code -->
+				<isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+				<isNotEmpty prepend="AND" property="searchEngine">
+					t.channel=#searchEngine#
+				</isNotEmpty>
+			</isNull>
+			<!-- 推广渠道下获取当前父级的数据 -->
+		 	<isNotNull  property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#-1
+				</isNotEqual>
+				AND t.channel = #channelParent#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<!--查询所有根渠道的渠道明细数据 -->
+	<select id="queryAllRootChannelData" parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+		SELECT rt.channel_name channelName,
+       rt.channel_type channelType,
+       rt.channel_code channel,
+        ts.*
+  		FROM root_channel rt
+  		LEFT JOIN (SELECT t.channel,
+                    <include refid="baseViewQuota"/>
+               FROM (<include refid="baseViewSql"/>) t
+               WHERE 1=1
+			 	<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+              GROUP BY t.channel
+              ) ts 
+             ON ts.channel = rt.channel_code
+             WHERE rt.channel_type = '5'
+		<!-- 渠道明细排除所有渠道汇总数据 -->
+             AND rt.channel_code >'9999999993'
+	</select>
+	
+	<!-- 搜索引擎、其他渠道 表连接sql,channelType=3||2 搜索引擎调用 -->
+	<sql id="ssyqOrOtherLeftSql">
+		SELECT zt.tag_name channelName,<include refid="baseViewQuotaCol"/> FROM 
+		(
+			SELECT ta.tag_code,ta.title tag_name from zero_channel_tag ta 
+			WHERE ta.type =#type# 
+			<isNotEmpty prepend="AND" property="searchEngine">
+				ta.tag_code = CONCAT('0.', #searchEngine#)
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="channel">
+				ta.tag_code = CONCAT('0.',#channel#)
+			</isNotEmpty>
+		)zt
+		LEFT JOIN (
+	</sql>
+	<sql id="ssyqOrOtherLeftSqlD">
+		SELECT zt.tag_name channelName,wb.statdt,<include refid="baseViewQuotaCol"/> FROM 
+		(
+			SELECT ta.tag_code,ta.title tag_name from zero_channel_tag ta 
+			WHERE ta.type =#type# 
+			<isNotEmpty prepend="AND" property="searchEngine">
+				ta.tag_code = CONCAT('0.',#searchEngine#)
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="channel">
+				ta.tag_code = CONCAT('0.',#channel#)
+			</isNotEmpty>
+		)zt
+		LEFT JOIN (
+	</sql>
+	
+	<sql id="ssyqOrOtherRightSql">
+		) wb ON zt.tag_code = CONCAT('0.',wb.channel)
+	</sql>
+	
+	<!-- 查询渠道明细数据 搜索引擎和其他 -->
+	<select id="queryChannelData"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<include refid="ssyqOrOtherLeftSql" />
+	
+	SELECT t.channel,
+	<include refid="baseViewQuota" />
+	FROM (
+	<include refid="baseViewSql" />
+	) t
+	<dynamic prepend="WHERE">
+		<isNotEqual prepend="AND" property="level" compareValue="0">
+			t.channel_level=#level#
+		</isNotEqual>
+		<!-- 汇总根级渠道code -->
+		<isNotNull prepend="AND" property="channel">
+			t.channel=#channel#
+		</isNotNull>
+		<isNotNull prepend="AND" property="searchEngine">
+			t.channel=#searchEngine#
+		</isNotNull>
+		GROUP BY t.channel
+	</dynamic>
+
+	<include refid="ssyqOrOtherRightSql" />
+	</select>
+	
+	
+	<!-- 推广渠道表连接sql,channelType=4 推广渠道调用 -->
+	<sql id="routeLeftSqlD">
+		SELECT wb.statdt,rti.name channelName,wb.channel,<include refid="baseViewQuotaCol"/> 
+		FROM (SELECT t1.name,t1.tag_code from route_info t1 where t1.channel_type=2 <!-- 无线推广 -->
+		<isNotEmpty property="level">
+			<isNotEqual prepend="AND" property="level" compareValue="0">
+					t1.level=#level#
+			</isNotEqual>
+		</isNotEmpty> 
+		<isNotEmpty property="parent">
+			<isNotEqual prepend="AND" property="parent" compareValue="0">
+					t1.parent=#parent#
+			</isNotEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="channel">
+			t1.tag_code=#channel#
+		</isNotEmpty>
+		) rti LEFT JOIN (
+	</sql>
+	<sql id="routeLeftSql">
+		SELECT rti.name channelName,wb.channel,<include refid="baseViewQuotaCol"/> 
+		FROM (SELECT t1.name,t1.tag_code from route_info t1 where t1.channel_type=2 <!-- 无线推广 -->
+		<isNotEmpty property="level">
+			<isNotEqual prepend="AND" property="level" compareValue="0">
+					t1.level=#level#
+			</isNotEqual>
+		</isNotEmpty> 
+		<isNotEmpty property="parent">
+			<isNotEqual prepend="AND"  property="parent" compareValue="0">
+					t1.parent=#parent#
+			</isNotEqual>
+		</isNotEmpty> 
+		<isNotEmpty prepend="AND" property="channel">
+			t1.tag_code=#channel#
+		</isNotEmpty>
+		) rti LEFT JOIN (
+	</sql>
+	<sql id="routeRightSql">
+		) wb ON rti.tag_code = wb.channel 
+	</sql>
+ 
+	<!-- 查询推广渠道明细数据 -->
+	<select id="queryChannelData4tuiguang"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<include refid="routeLeftSql" />
+	SELECT t.channel,
+	<include refid="baseViewQuota" />
+	FROM (<include refid="baseViewSql" />) t
+	<dynamic prepend="WHERE">
+		<isNotEqual prepend="AND" property="level" compareValue="0">
+			t.channel_level=#level#
+		</isNotEqual>
+		<!-- 汇总根级渠道code -->
+		<isNotNull prepend="AND" property="channel">
+			t.channel=#channel#
+		</isNotNull>
+		GROUP BY t.channel
+	</dynamic>
+	<include refid="routeRightSql" />
+	</select>
+	
+	
+	<!--查询所有根渠道的趋势明细数据 -->
+	<select id="queryAllRootChannelTrendData" parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	SELECT
+	rt.channel_name channelName,
+	rt.channel_type channelType,
+	rt.channel_code channel,
+	ts.create_time statdt,
+	ts.auth_uv authPageUv,
+	ts.hongbao_uv
+	hongbaoIndexUv,
+	ts.kaihu_result_uv h5OpenAccResultPageUv,
+	ts.kaihu_uv
+	h5OpenAccIndexPageUv,
+	ts.openacct_num openaccNum,
+	ts.pv,
+	ts.uv,
+	ts.enter
+	FROM root_channel rt
+	LEFT JOIN (
+	<include refid="baseViewSql" />
+	) ts
+	ON ts.channel = rt.channel_code
+	WHERE rt.channel_type = '5'
+	<isNotEqual property="channelType" compareValue="5">
+		<isNotEmpty property="channel" prepend="AND">
+		rt.channel_code=#channel#
+		</isNotEmpty>
+	</isNotEqual>
+	</select>
+	
+	
+	<!-- 根渠道和日期的交叉连接表 -->
+	<sql id="rootCh">
+		SELECT rtc.channel_name, rtc.channel_type,rtc.channel_code
+		FROM root_channel rtc 
+		<dynamic prepend="WHERE">
+		<isNotEmpty property="channelType" >
+			<isNotEqual property="channelType" compareValue="-1" prepend="AND">
+				 rtc.channel_type = #channelType#
+			</isNotEqual>
+			<isEqual property="channelType" compareValue="-1" prepend="AND">
+				rtc.channel_type = '5'
+			</isEqual>
+			<isNotEmpty property="channel" prepend="AND" >
+				rtc.channel_code=#channel#
+			</isNotEmpty>
+		</isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<!-- 直接访问数据连接 -->
+	<sql id="zjfwLeftSql">
+		SELECT zt.channel_name channelName,zt.channel_code channel,
+		<include refid="baseViewQuotaCol"/>
+		 FROM (<include refid="rootCh"/> ) zt
+		LEFT JOIN (
+	</sql>
+	<sql id="zjfwLeftSqlD">
+		SELECT rt.statdt,zt.channel_name channelName,zt.channel_code channel,
+		<include refid="baseViewQuotaCol"/>
+		 FROM (<include refid="rootCh"/> ) zt
+		LEFT JOIN (
+	</sql>
+	<sql id="zjfwRightSql">
+		) rt  ON zt.channel_code = rt.channel
+	</sql>
+	
+	<!-- 查询渠道趋势明细数据 -->
+	<sql id="queryChannelDataDetailBase">
+	SELECT t.create_time statdt,
+	t.channel,
+	t.auth_uv authPageUv,
+	t.hongbao_uv hongbaoIndexUv,
+	t.kaihu_result_uv h5OpenAccResultPageUv,
+	t.kaihu_uv	h5OpenAccIndexPageUv,
+	t.openacct_num openaccNum,
+	t.pv,
+	t.uv,
+	t.enter
+	FROM (<include refid="baseViewSql" />) t
+	<dynamic prepend="WHERE">
+		<isNotEqual prepend="AND" property="level" compareValue="0">
+			t.channel_level=#level#
+		</isNotEqual>
+		<isNotEmpty prepend="AND" property="channel">
+			t.channel=#channel#
+		</isNotEmpty>
+	</dynamic>
+	</sql>
+	
+	
+	<!-- 查询当日渠道趋势明细 -->
+	<select id="queryChannelDataDetailZjfw"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="1" property="channelType"><include refid="zjfwLeftSqlD"/></isEqual>
+	</isNotEmpty>
+	<include refid="queryChannelDataDetailBase"/>
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="1" property="channelType"><include refid="zjfwRightSql"/></isEqual>
+	</isNotEmpty>
+	</select>
+	<select id="queryChannelDataDetailSsyqOrOther"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="2" property="channelType"><include refid="ssyqOrOtherLeftSqlD"/></isEqual>
+		<isEqual compareValue="3" property="channelType"><include refid="ssyqOrOtherLeftSqlD"/></isEqual>
+	</isNotEmpty>
+	<include refid="queryChannelDataDetailBase"/>
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="2" property="channelType"><include refid="ssyqOrOtherRightSql"/></isEqual>
+		<isEqual compareValue="3" property="channelType"><include refid="ssyqOrOtherRightSql"/></isEqual>
+	</isNotEmpty>
+	</select>
+	<select id="queryChannelDataDetailRoute"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="4" property="channelType"><include refid="routeLeftSqlD"/></isEqual>
+	</isNotEmpty>
+	<include refid="queryChannelDataDetailBase"/>
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="4" property="channelType"><include refid="routeRightSql"/></isEqual>
+	</isNotEmpty>
+	</select>
+	
+	
+	<!-- 查询当日时间走势数据 -->
+	<select id="queryChannelTrendDataDetail" parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+		<include refid="queryChannelDataDetailBase"/>
+	</select>
+	<!--  实时数据表结束  -->
+	
+	
+	
+	<!-- 离线数据开始 -->	
+	<!-- 指标数据基础表 --> 
+	<sql id="baseViewStatHis">
+	SELECT tb.dt,
+	tb.auth_index,
+	tb.channel,
+	tb.channel_level,
+	tb.channel_parent,
+	tb.channel_type,
+	tb.huodong_index,
+	tb.openacct_index,
+	tb.open_result_index,
+	tb.pv,
+	tb.uv,
+	tb.enter,
+	tb.openacct_num
+	FROM
+	channel_view_trade_stat_h5 tb
+	<dynamic prepend="WHERE">
+		<isNotEmpty prepend="AND" property="beginDate">
+			tb.dt >=#beginDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+			tb.dt <![CDATA[<=]]>#endDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="channelType">
+			tb.channel_type = #channelType#
+		</isNotEmpty>
+	</dynamic>
+	</sql>
+	
+	<!-- 基本指标数据 -->
+	<sql id="baseViewQuotaHis">
+	SUM(t.auth_index) authPageUv,
+	SUM(t.huodong_index) hongbaoIndexUv,
+	SUM(t.open_result_index) h5OpenAccResultPageUv,
+	SUM(t.openacct_index) h5OpenAccIndexPageUv,
+	SUM(t.openacct_num) openaccNum,
+	SUM(t.pv) pv,
+	SUM(t.uv) uv,
+	SUM(t.enter) enter
+	</sql>
+	
+	<sql id="baseViewQuotaAsHis">
+	t.auth_index authPageUv,
+	t.huodong_index hongbaoIndexUv,
+	t.open_result_index h5OpenAccResultPageUv,
+	t.openacct_index h5OpenAccIndexPageUv,
+	t.openacct_num openaccNum,
+	t.pv pv,
+	t.uv uv,
+	t.enter enter
+	</sql>
+	
+	<!-- 查询所有汇总数据-离线 -->
+	<select id="getH5ActivityCollDataHis" parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+		SELECT <include refid="baseViewQuotaHis"/> FROM (<include refid="baseViewStatHis"/>) t
+		<dynamic prepend="WHERE">
+			<isNull property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<!-- 汇总根级渠道code -->
+				<isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+				<isNotEmpty prepend="AND" property="searchEngine">
+					t.channel=#searchEngine#
+				</isNotEmpty>
+			</isNull>
+			<!-- 推广渠道下获取当前父级的数据 -->
+		 	<isNotNull  property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#-1
+				</isNotEqual>
+				AND t.channel = #channelParent#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<sql id="queryChannelDataHisBase">
+	SELECT t.channel,<include refid="baseViewQuotaHis"/> FROM (<include refid="baseViewStatHis"/>) t
+		<dynamic prepend="WHERE">
+			<isNull property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<!-- 汇总根级渠道code -->
+				<isNotNull prepend="AND" property="channel">
+					<isNotEqual compareValue="5" property="channelType">
+						t.channel=#channel#
+					</isNotEqual>
+				</isNotNull>
+			</isNull>
+			<!-- 推广渠道下获取当前父级的数据 -->
+		 	<isNotNull  property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#-1
+				</isNotEqual>
+				<isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+				AND t.channel_parent = #parent#
+			</isNotNull>
+			GROUP BY t.channel
+		</dynamic>		
+	</sql>
+	
+	<!-- 查询渠道明细数据- 离线数据-->
+	<select id="queryChannelDataHisRoot"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<!--查询所有根渠道的渠道明细数据 -->
+		SELECT rt.channel_name channelName,
+       rt.channel_type channelType,
+       rt.channel_code channel,
+        ts.*
+  		FROM root_channel rt
+  		LEFT JOIN (<include refid="queryChannelDataHisBase"/> ) ts 
+             ON ts.channel = rt.channel_code
+             WHERE rt.channel_type = '5'
+		<!-- 渠道明细排除所有渠道汇总数据 -->
+             AND rt.channel_code >'9999999993'
+	</select>
+	
+	 
+	<!-- 查询搜索引擎渠道历史数据 -->
+	<select id="queryChannelDataHisSsyqOrOther" parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+		<include refid="ssyqOrOtherLeftSql" />
+		SELECT t.channel,
+		<include refid="baseViewQuotaHis" />
+		FROM (
+		<include refid="baseViewStatHis" />
+		) t
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" property="level" compareValue="0">
+				t.channel_level=#level#
+			</isNotEqual>
+			<!-- 汇总根级渠道code -->
+			<isNotEmpty prepend="AND" property="channel">
+				t.channel=#channel#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="searchEngine">
+				t.channel=#searchEngine#
+			</isNotEmpty>
+			GROUP BY t.channel
+		</dynamic>
+		<include refid="ssyqOrOtherRightSql" />
+	</select>
+	
+	
+	<!-- 离线数据-推广 -->
+	<select id="queryChannelDataHistuiguang"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+		<include refid="routeLeftSql"/>
+		SELECT t.channel,<include refid="baseViewQuotaHis"/> FROM (<include refid="baseViewStatHis"/>) t
+		<dynamic prepend="WHERE">
+			<isNull property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<!-- 汇总根级渠道code -->
+				<isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+			</isNull>
+			<!-- 推广渠道下获取当前父级的数据 -->
+		 	<isNotNull  property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+				AND t.channel_parent = #channelParent#
+			</isNotNull>
+		</dynamic>		
+		<include refid="routeRightSql"/>
+	</select>
+	<select id="queryChannelTrendDataHistuiguang"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+		<include refid="routeLeftSql"/>
+		SELECT t.dt,t.channel,<include refid="baseViewQuotaAsHis"/> FROM (<include refid="baseViewStatHis"/>) t
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="beginDate">
+				t.dt >= #beginDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				t.dt <![CDATA[<=]]>#endDate#
+			</isNotEmpty>
+			<isNotNull prepend="AND" property="channelType">
+				t.channel_type = #channelType#
+			</isNotNull>
+			<isNull property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<!-- 汇总根级渠道code -->
+				<isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+			</isNull>
+			<!-- 推广渠道下获取当前父级的数据 -->
+		 	<isNotNull  property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+				AND t.channel_parent = #channelParent#
+			</isNotNull>
+		</dynamic>		
+		<include refid="routeRightSql"/>
+	</select>
+	
+	<!-- 查询趋势明细  离线数据 -->
+	<select id="queryTrendDataList" parameterClass="java.util.HashMap" resultClass="activityDataMapping" >
+	SELECT t.dt,t.channel,<include refid="baseViewQuotaAsHis"/> FROM (<include refid="baseViewStatHis"/>) t
+		<dynamic prepend="WHERE">
+			<isNull property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<!-- 汇总根级渠道code -->
+				<isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+				<isNotEmpty prepend="AND" property="searchEngine">
+					t.channel=#searchEngine#
+				</isNotEmpty>
+			</isNull>
+			<!-- 推广渠道下获取当前父级的数据 -->
+		 	<isNotNull  property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#-1
+				</isNotEqual>
+				AND t.channel=#channelParent#
+			</isNotNull>
+			GROUP BY t.dt
+		</dynamic>
+	</select>
+	
+	<sql id="queryChannelTrendDataHisListBase">
+		SELECT t.channel,t.dt,<include refid="baseViewQuotaAsHis"/> FROM (<include refid="baseViewStatHis"/>) t
+		<dynamic prepend="WHERE">
+			<isNull property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#
+				</isNotEqual>
+				<!-- 汇总根级渠道code -->
+				<isNotNull prepend="AND" property="channel">
+					<isNotEqual property="channel" compareValue="9999999993">
+						t.channel=#channel#
+					</isNotEqual>
+				</isNotNull>
+				<isNotEmpty prepend="AND" property="searchEngine">
+					t.channel=#searchEngine#
+				</isNotEmpty>
+			</isNull>
+			<!-- 推广渠道下获取当前父级的数据 -->
+		 	<isNotNull  property="channelParent">
+				<isNotEqual prepend="AND" property="level" compareValue="0">
+					t.channel_level=#level#-1
+				</isNotEqual>
+				<!-- <isNotNull prepend="AND" property="channel">
+					t.channel=#channel#
+				</isNotNull>
+				AND t.channel_parent = #channelParent# -->
+				AND t.channel=#channelParent#
+			</isNotNull>
+		</dynamic>
+	</sql>
+	
+	<!-- 查询渠道趋势明细  离线数据 -->
+	<select id="queryAllRootChannelTrendHisData" parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	SELECT
+	rt.channel_name channelName,
+	rt.channel_type channelType,
+	rt.channel_code channel,
+	t.dt statdt,
+	<include refid="baseViewQuotaAsHis"/>
+	FROM root_channel rt
+	RIGHT JOIN (
+	<include refid="baseViewStatHis"/>
+	) t
+	ON t.channel = rt.channel_code
+	WHERE rt.channel_type = '5'
+	<isNotEqual property="channelType" compareValue="5">
+		<isNotEmpty property="channel" prepend="AND">
+		rt.channel_code=#channel#
+		</isNotEmpty>
+	</isNotEqual>
+	</select>
+	
+	<sql id="zjfwLeftSqlDHis">
+		SELECT rt.dt statdt,zt.channel_name channelName,zt.channel_code channel,
+		<include refid="baseViewQuotaCol"/>
+		 FROM (<include refid="rootCh"/> ) zt
+		LEFT JOIN (
+	</sql>
+	
+	<select id="queryChannelHisDataDetailZjfw"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="1" property="channelType"><include refid="zjfwLeftSqlDHis"/></isEqual>
+	</isNotEmpty>
+	<include refid="queryChannelTrendDataHisListBase"/>
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="1" property="channelType"><include refid="zjfwRightSql"/></isEqual>
+	</isNotEmpty>
+	</select>
+	
+	<sql id="ssyqOrOtherLeftSqlDHis">
+		SELECT zt.tag_name channelName,wb.dt statdt,<include refid="baseViewQuotaCol"/> FROM 
+		(
+			SELECT ta.tag_code,ta.title tag_name from zero_channel_tag ta 
+			WHERE ta.type =#type# 
+			<isNotEmpty prepend="AND" property="searchEngine">
+				ta.tag_code = CONCAT('0.',#searchEngine#)
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="channel">
+				ta.tag_code = CONCAT('0.',#channel#)
+			</isNotEmpty>
+		)zt
+		LEFT JOIN (
+	</sql>
+	<select id="queryChannelHisDataDetailSsyqOrOther"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="2" property="channelType"><include refid="ssyqOrOtherLeftSqlDHis"/></isEqual>
+		<isEqual compareValue="3" property="channelType"><include refid="ssyqOrOtherLeftSqlDHis"/></isEqual>
+	</isNotEmpty>
+	<include refid="queryChannelTrendDataHisListBase"/>
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="2" property="channelType"><include refid="ssyqOrOtherRightSql"/></isEqual>
+		<isEqual compareValue="3" property="channelType"><include refid="ssyqOrOtherRightSql"/></isEqual>
+	</isNotEmpty>
+	</select>
+	
+	<!-- 推广渠道表连接sql,channelType=4 推广渠道调用 -->
+	<sql id="routeLeftSqlDHis">
+		SELECT wb.dt statdt,rti.name channelName,wb.channel,<include refid="baseViewQuotaCol"/> 
+		FROM (SELECT t1.name,t1.tag_code from route_info t1 where t1.channel_type=2 <!-- 无线推广 -->
+		<isNotEmpty property="level">
+			<isNotEqual prepend="AND" property="level" compareValue="0">
+					t1.level=#level#
+			</isNotEqual>
+		</isNotEmpty> 
+		<isNotEmpty property="parent">
+			<isNotEqual prepend="AND" property="parent" compareValue="0">
+					t1.parent=#parent#
+			</isNotEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="channel">
+			t1.tag_code=#channel#
+		</isNotEmpty>
+		) rti LEFT JOIN (
+	</sql>
+	<select id="queryChannelHisDataDetailRoute"  parameterClass="java.util.HashMap" resultClass="activityCollDataMapping" >
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="4" property="channelType"><include refid="routeLeftSqlDHis"/></isEqual>
+	</isNotEmpty>
+	<include refid="queryChannelTrendDataHisListBase"/>
+	<isNotEmpty property="channelType">
+		<isEqual compareValue="4" property="channelType"><include refid="routeRightSql"/></isEqual>
+	</isNotEmpty>
+	</select>
+	
+</sqlMap>

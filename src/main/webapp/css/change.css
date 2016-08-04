@@ -1,0 +1,50 @@
+/* 涓讳綋妗嗘灦涓讳綋 */
+/* .main {
+	min-height:600px;
+	height:auto !important;
+	height:600px;
+	overflow:visible;
+	border-left:190px solid #fff;
+	min-width:800px;
+	padding-top:50px;
+	_width:expression((documentElement.clientWidth < 1000) ? "800px" : "auto");
+} */
+/* 涓讳綋妗嗘灦渚ц竟鏍�*/
+/* .sidenav {position: absolute;width: 190px;top:50px;left:0;background: #fff;} */
+
+/******************* 璁块棶娓犻亾椤甸潰  **********************/
+/* 鎺ㄥ箍娓犻亾 瀹藉害 */
+.tgqd-box dt dd ul li{
+	width:100px;
+}
+.chartbox_tab .bar .other {
+	font-size:14px;
+	padding:5px 20px;
+	height:55px;
+}
+.chartbox_tab .bar .other.current{
+	background:#fff;
+}
+
+.detail_filter dl dt {float: left;width: 80px;text-align: right;}
+
+.detail_filter dl dd ul li {float: left;width:96px;overflow:hidden;}
+
+.det-page .bar2 .active{
+	color:#232323;
+	cursor:pointer;
+}
+.det-page .bar2 li.num a {cursor:pointer;}
+
+.sort,.sort:hover{
+	text-decoration: none;color: #333;
+}
+
+/****************** 娓犻亾绠＄悊 **************/
+.qd_show{padding:50px 10px 10px 20px;width:480px;}
+.website{padding:10px 10px 13px;background-color:#f1f4f7;margin-top: 20px;}
+.copysite{height: 24px;width:300px;}
+.tgsite{width:305px;border:none;background-color:#f1f4f7;}
+
+/****************** 鍏嫙缁熻 **************/	
+.detail_filter .table1 {width: 1130px;padding: 20px 10px 10px;}

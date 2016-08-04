@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<!--  定时任务Bean[系统自动生成] -->
+<beans>
+
+	<bean name="quartzTesterName"  id="QuartzTester" class="com.howbuy.uaa.core.QuartzTest" scope="prototype"></bean>
+	
+	<bean id="quartzTestDependency" class="com.howbuy.uaa.core.QuartzTestDependency">
+		<lookup-method name="createQuartzTest" bean="QuartzTester"/>
+	</bean>
+	
+	<!-- <bean id="quartzTestDependency" class="com.howbuy.uaa.core.QuartzTestDependency">
+	</bean> -->
+	
+    <!-- web交易行为分析定时任务 -->
+    <!-- <bean id="statjob_Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        property name="targetObject">
+            <ref local="QuartzTester"/>
+        </property
+        <property name="targetBeanName">
+        	<value>quartzTesterName</value>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+    </bean>
+
+    <bean id="queueScanerTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="statjob_Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>3/10 * * * * ?</value>
+        </property>
+    </bean> -->
+    
+    <bean id="statjob_Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref local="quartzTestDependency"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+    </bean>
+
+    <bean id="queueScanerTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="statjob_Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>3/5 * * * * ?</value>
+        </property>
+    </bean>
+
+
+    <bean id="scheduler" autowire="no"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+<!--                 <ref local="queueScanerTaskTrigger"/> -->
+            </list>
+        </property>
+    </bean>
+</beans>

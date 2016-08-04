@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="web.propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+   		<property name="locations">
+   			<list>
+	   			<value>classpath:website.properties</value>
+	   			<value>classpath:properties/application.properties</value>
+   			</list>
+   		</property> 
+   	</bean>
+   	
+    <bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename">
+			<value>messages</value>
+		</property>
+	</bean>
+	
+	<!--<bean id="validateUtil"-->
+		<!--class="com.howbuy.core.validate.ValidateUtil">-->
+		<!--<property name="messageSource">-->
+			<!--<ref bean="messageSource"/>-->
+		<!--</property>-->
+		 <!---->
+	<!--</bean>-->
+	 
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+	</bean>
+ 
+ 	<bean id="paramResolver"
+		class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+		<property name="paramName" value="method" />
+		<property name="defaultMethodName"><value>index</value></property>
+	</bean>
+	<bean id="internalResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver">
+	</bean>
+
+	<bean name="mutiActionHander"
+		class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver" ref="paramResolver" />
+	</bean>
+	<bean id="viewResolver"	class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="viewClass">
+			<value>
+				org.springframework.web.servlet.view.freemarker.FreeMarkerView
+			</value>
+		</property>
+		<property name="cache">
+			<value>false</value>
+		</property>
+		<property name="suffix">
+			<value>.ftl</value>
+		</property>
+		<property name="contentType"><value>text/html; charset=UTF-8</value></property>
+		<property name="exposeSpringMacroHelpers" value="true"/>
+		<property name="requestContextAttribute" value="rc"/>
+	</bean>
+	<bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPaths">
+			<list>
+				<value>WEB-INF/view/</value>
+				<!--<value>file:${includeFile.path}</value>-->
+			</list>
+		</property>
+		<property name="configLocation" value="/WEB-INF/classes/freemarker.properties" />
+		<!--<property name="freemarkerVariables">-->
+			<!--<map>-->
+				<!--<entry key="cache" value-ref="fmCacheTag"></entry>-->
+				<!--<entry key="version" value-ref="fmStaticVersionMethod"></entry>-->
+			<!--</map>-->
+		<!--</property>-->
+	</bean>
+	  <!--<bean id="fmCacheTag" class="com.howbuy.core.tag.freemarker.CacheTag"></bean>-->
+	  <!--<bean id="fmStaticVersionMethod" class="com.howbuy.core.freemarker.method.StaticVersionMethod"></bean>-->
+	
+	<!--<bean id="multipartResolver"-->
+        <!--class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
+    <!--&lt;!&ndash; 设置上传文件的最大尺寸为2MB &ndash;&gt;-->
+        <!--<property name="maxUploadSize">-->
+        <!--<value>5242880</value>-->
+    <!--</property>-->
+<!--</bean>-->
+</beans>

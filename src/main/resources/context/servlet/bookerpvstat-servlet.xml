@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+    <!-- <bean name="bookerPvStatController"
+          class="com.howbuy.uaa.web.controller.BookerPvStatController">
+          <property name="bookerPvStatService" ref="bookerPvStatService"/>
+
+        <property name="historyView">
+            <value>ftl/pvstat/historyPvStat</value>
+        </property>
+
+        <property name="monthView">
+            <value>ftl/pvstat/monthPvStat</value>
+        </property>
+    </bean>
+
+    <bean name="bookerTrackController"
+          class="com.howbuy.uaa.web.controller.BookerTrackController">
+        <property name="bookerPvTrackService" ref="bookerPvTrackService"/>
+
+        <property name="trackView">
+            <value>ftl/pvtrack/bookerTrack</value>
+        </property>
+        <property name="firstsView">
+            <value>ftl/pvtrack/bookerFirst</value>
+        </property>
+    </bean>
+
+    <bean name="pvStatController"
+          class="com.howbuy.uaa.web.controller.PvStatController">
+        <property name="pvStatService" ref="pvStatService"/>
+        <property name="pvStatDao" ref="pvStatDao"></property>
+        <property name="firstPvStatView">
+            <value>ftl/firstpvstat/firstPvStat</value>
+        </property>
+    </bean>
+
+    <bean name="bookerHistoryController"
+          class="com.howbuy.uaa.web.controller.BookerHistoryController">
+        <property name="bookerUserService" ref="bookerUserService"/>
+        <property name="bookerPvHistoryService" ref="bookerPvHistoryService"/>
+        <property name="indexView">
+            <value>ftl/history/index</value>
+        </property>
+        <property name="trackView">
+            <value>ftl/history/track</value>
+        </property>
+        <property name="bookerView">
+            <value>ftl/history/booker</value>
+        </property>
+    </bean>
+
+    <bean name="adminController"
+          class="com.howbuy.uaa.web.controller.AdminController">
+        <property name="bookerPvStatHiveService" ref="bookerPvStatHiveService"/>
+        <property name="bookerPvHistoryService" ref="bookerPvHistoryService"/>
+        <property name="bookerPvTrackHiveService" ref="bookerPvTrackHiveService"/>
+        <property name="indexView">
+            <value>ftl/admin/index</value>
+        </property>
+    </bean>
+
+
+    <bean id="userHabitUrlMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/pvstat/*.htm">bookerPvStatController</prop>
+                <prop key="/pvtrack/*.htm">bookerTrackController</prop>
+                <prop key="/firstpvstat/*.htm">pvStatController</prop>
+                <prop key="/history/*.htm">bookerHistoryController</prop>
+                <prop key="/admin/*.htm">adminController</prop>
+            </props>
+        </property>
+    </bean> -->
+</beans>

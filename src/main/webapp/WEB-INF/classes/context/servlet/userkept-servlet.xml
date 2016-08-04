@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+	<bean id="userkeepMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/auth/ukeep/*.htm">userKeepController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 用户留存管理 -->
+	<bean id="userKeepController" class="com.howbuy.uaa.web.controller.UserAnalysisController" init-method="init">
+	 	<property name="queryChannelUrl" value="${get_channel_url}"></property>
+	 	<property name="apiUrl" value="${api_admin_query}"></property>
+    	<property name="index" value="ftl/userkeep/ukeep_year"></property>
+    	<property name="indexGraphDetail" value="ftl/include/ukeepGraphDetail"></property>
+    	<property name="mindex" value="ftl/userkeep/ukeep_mon"></property>
+    	<property name="indexGraphDetailM" value="ftl/include/ukeepGraphDetailM"></property>
+    </bean>
+     
+</beans>

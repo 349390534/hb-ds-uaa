@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+	<bean id="loginManagerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/login/*.htm">LoginController</prop>
+				<prop key="/main.htm">mainController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 角色管理 -->
+	<bean id="LoginController" class="com.howbuy.uaa.web.controller.LoginController">
+    	<property name="userManagerService" ref="userManagerService"></property>
+    	<property name="index" value="ftl/login/login"></property>
+    	<property name="popLogin" value="ftl/login/poplogin"></property>
+<!--     	<property name="home" value="ftl/home/home"></property> -->
+    	<property name="home" value="redirect:/main.htm"></property>
+    	<property name="authentication" ref="ldapAuthentication"></property>
+    	<property name="ldapTemplate" ref="uaaLdapTemplate"></property>
+    	<property name="pererror" value="ftl/error/pererror"></property>
+    </bean>
+    
+	<bean id="mainController" class="com.howbuy.uaa.web.controller.MainController">
+    	<property name="index" value="ftl/login/login"></property>
+    	<property name="home" value="ftl/home/home"></property>
+    </bean>
+</beans>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+    <!--hive \-\-service hiveserver 10000-->
+    <!-- 配置datasource -->
+    <bean id="hiveDataSource"
+          class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.apache.hadoop.hive.jdbc.HiveDriver"/>
+        <property name="url" value="jdbc:hive://10.70.70.27:10000/default"/>
+        <!-- property name="url" value="jdbc:hive://192.168.220.25:10000/default"/-->
+        <property name="username" value=""/>
+        <property name="password" value=""/>
+        <property name="maxWait" value="315360000"/>
+        <!-- property name="testWhileIdle"><value>true</value></property>
+        <property name="testOnBorrow"><value>false</value></property>
+        <property name="testOnReturn"><value>false</value></property>
+        <property name="validationQuery"><value>select count(*) from hbase_tb</value></property>
+        <property name="minEvictableIdleTimeMillis"><value>1000</value></property>
+        <property name="timeBetweenEvictionRunsMillis"><value>30000</value></property>
+        <property name="numTestsPerEvictionRun"><value>20</value></property-->
+    </bean>
+    <bean id="hiveHandler" class="com.howbuy.uaa.core.HiveDao">
+        <constructor-arg ref="hiveDataSource"/>
+    </bean>
+</beans>
+

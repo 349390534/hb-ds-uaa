@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+    
+   <!--  <bean id="StatReport" class="com.howbuy.uaa.quartz.StatReport"/>
+    
+    <bean id="PVUVStat" class="com.howbuy.uaa.quartz.PVUVStat"></bean>
+    
+    <bean id="Howbuy2EhowbuyStat" class="com.howbuy.uaa.quartz.Howbuy2EhowbuyStat"></bean>
+    
+    <bean id="Howbuy2EhowbuyIntervalStat" class="com.howbuy.uaa.quartz.Howbuy2EhowbuyIntervalStat"></bean> -->
+</beans>
+

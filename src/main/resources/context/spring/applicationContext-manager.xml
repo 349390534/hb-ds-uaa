@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+
+<!-- 
+	<bean id="analysisReportService" class="com.howbuy.uaa.service.AnalysisReportService">
+		<property name="analysisDao" ref="analysisDao" />
+	</bean>
+	<bean id="analysisDao" class="com.howbuy.uaa.dao.impl.AnalysisDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+ -->
+
+	<bean id="analysisDataToolService" class="com.howbuy.uaa.service.AnalysisDataToolService">
+		<property name="analysisDataToolDao" ref="analysisDataToolDao"></property>
+	</bean>
+	<bean id="analysisDataToolDao" class="com.howbuy.uaa.dao.impl.AnalysisDataToolDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+
+	<!-- 好买网站 -->
+	<bean id="analysisHowbuyWebsiteService" class="com.howbuy.uaa.service.AnalysisHowbuyWebsiteService">
+		<property name="analysisHowbuyWebsiteDao" ref="analysisHowbuyWebsiteDao"></property>
+	</bean>
+	<bean id="analysisHowbuyWebsiteDao" class="com.howbuy.uaa.dao.impl.AnalysisHowbuyWebsiteDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+
+
+	<bean id="analysisCoreDataService" class="com.howbuy.uaa.service.AnalysisCoreDataService">
+		<property name="analysisCoreDataDao" ref="analysisCoreDataDao"></property>
+	</bean>
+	<bean id="analysisCoreDataDao" class="com.howbuy.uaa.dao.impl.AnalysisCoreDataDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+
+	<bean id="roleManagerService" class="com.howbuy.uaa.service.RoleManagerService">
+		<property name="permissionManagerService" ref="permissionManagerService"></property>
+		<property name="roleManagerDao" ref="roleManagerDao"></property>
+	</bean>
+	<bean id="roleManagerDao" class="com.howbuy.uaa.dao.impl.RoleManagerDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+	
+	<bean id="permissionManagerService" class="com.howbuy.uaa.service.PermissionManagerService">
+		<property name="permissionManagerDao" ref="permissionManagerDao"></property>
+		
+	</bean>
+	<bean id="permissionManagerDao" class="com.howbuy.uaa.dao.impl.PermissionManagerDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+	
+	<bean id="userManagerService" class="com.howbuy.uaa.service.UserManagerService">
+		<property name="userManagerDao" ref="userManagerDao"></property>
+		<property name="permissionManagerDao" ref="permissionManagerDao"></property>
+		<property name="permissionManagerService" ref="permissionManagerService"></property>
+		<property name="roleManagerDao" ref="roleManagerDao"></property>
+	</bean>
+	<bean id="userManagerDao" class="com.howbuy.uaa.dao.impl.UserManagerDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+	
+	
+	<!-- 好买无线 -->
+	<bean id="channelEventAccountDao" class="com.howbuy.uaa.dao.impl.ChannelEventAccountDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+	<bean id="channelEventAccountService" class="com.howbuy.uaa.service.ChannelEventAccountService">
+		<property name="channelEventAccountDao" ref="channelEventAccountDao"></property>
+	</bean>
+	<!-- 好买H5活动 -->
+	<bean id="accountH5Dao" class="com.howbuy.uaa.dao.impl.ChannelEventAccountH5DaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+	<bean id="activityH5Service" class="com.howbuy.uaa.service.ActivityH5Service">
+		<property name="accountH5Dao" ref="accountH5Dao"></property>
+	</bean>
+	
+	<bean id="dataxApiService" class="com.howbuy.uaa.service.DataxApiService" init-method="init">
+		<property name="channelUrl">
+			<value>${get_channel_url}</value>
+		</property>
+		<property name="custUrl">
+			<value>${api_report_gmtj_cust}</value>
+		</property>
+		<property name="sjhzUrl">
+			<value>${api_report_gmtj_sjhz}</value>
+		</property>
+		<property name="apiAdminQuery">
+			<value>${api_admin_query}</value>
+		</property>
+	</bean>
+	
+</beans>

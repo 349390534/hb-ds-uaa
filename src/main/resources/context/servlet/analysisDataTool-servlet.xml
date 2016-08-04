@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+	<bean id="analysisDataToolMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/auth/routemanager/*.htm">RouteManageController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 渠道管理 -->
+	<bean id="RouteManageController" class="com.howbuy.uaa.web.controller.RouteManageController">
+    	<property name="analysisDataToolService" ref="analysisDataToolService"></property>
+    	<property name="index" value="ftl/analysisconsole/qdManage"></property>
+    	<property name="routeLevelOne" value="ftl/include/routeLevelOne"></property>
+    	<property name="routeLevelTwo" value="ftl/include/routeLevelTwo"></property>
+    	<property name="routeLevelThree" value="ftl/include/routeLevelThree"></property>
+    	<property name="routeDetail" value="ftl/include/routeDetail"></property>
+    </bean>
+</beans>

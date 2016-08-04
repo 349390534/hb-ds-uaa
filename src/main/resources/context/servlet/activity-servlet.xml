@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="activityMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/auth/at/*.htm">activityController</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="activityController" class="com.howbuy.uaa.web.controller.ActivityController" init-method="init">
+    	<property name="index" value="ftl/activity/index"></property>
+    	<property name="graphView" value="ftl/activity/activity_graph"></property>
+    	<property name="detailView" value="ftl/activity/activity_detail"></property>
+    	<property name="indexQueryRouteOne" value="ftl/include/indexQueryRouteOne_wl"></property>
+    	<property name="indexQueryRouteTwo" value="ftl/include/indexQueryRouteTwo_wl"></property>
+    	<property name="indexQueryRouteThree" value="ftl/include/indexQueryRouteThree_wl"></property>
+    	<property name="analysisDataToolService" ref="analysisDataToolService"></property>
+    	<property name="analysisHowbuyWebsiteService" ref="analysisHowbuyWebsiteService"></property>
+    	<property name="activityH5Service" ref="activityH5Service"></property>
+    </bean>
+    
+</beans>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="RoleManager">
+	<typeAlias alias="role" type="com.howbuy.uaa.persistence.Role"/>
+	<typeAlias alias="permission" type="com.howbuy.uaa.persistence.Permission"/>
+	<typeAlias alias="userRoleRelation" type="com.howbuy.uaa.persistence.UserRoleRelation"/>
+	<typeAlias alias="user" type="com.howbuy.uaa.persistence.User"/>
+	
+	<select id="queryAllRole" resultClass="role">
+		SELECT 
+			id,
+			name,
+	        descriptions,
+	        content,
+	        status,
+	        version  
+			FROM UA_ROLE
+			WHERE status='0'
+	</select>
+	
+	<select id="queryPermissionByRole" parameterClass="java.util.HashMap" resultClass="permission">
+		select  
+			ap.id,
+			ap.permissionId,
+			ap.name,
+			ap.descriptions,
+			ap.rescourcelevel,
+			ap.status,
+			ap.url ,
+			ap.url_channel urlChannel
+		from UA_PERMISSION ap,UA_ROLE ar,UA_ROLE_PERMISSION  arp 
+		WHERE
+			ar.id=arp.roleID and arp.permissionID=ap.id and arp.roleid=#roleId#
+			<isNotEmpty property = "status">
+			and ar.status = #status#  
+			</isNotEmpty>
+			<isNotEmpty property = "level">
+			and ap.rescourcelevel = #level#
+			</isNotEmpty>
+	</select>
+	
+	
+	<insert id="batchSaveRolePermission" parameterClass="java.util.ArrayList">
+			INSERT INTO UA_ROLE_PERMISSION (	
+	              roleId,
+	              permissionId,
+	              status,
+	              createUser
+				)
+			VALUES
+		<iterate conjunction="," property="">
+		(
+			#[].roleId#,
+			#[].permissionId#,
+			#[].status#,
+			#[].createUser#
+		)
+		</iterate>
+	</insert>
+	
+	<delete id="batchDeleteRolePermission"  parameterClass="java.util.ArrayList">
+      delete      
+      from UA_ROLE_PERMISSION
+      where roleid in    
+      <iterate conjunction="," open="(" close=")">
+        #[]#
+      </iterate>
+    </delete>	
+    
+	<select id="queryRoleByName" parameterClass="java.util.HashMap" resultClass="role">
+		select id,
+			name,
+	        descriptions,
+	        content,
+	        status 
+			FROM UA_ROLE where 
+			 name = #roleName#
+			<isNotEmpty property = "status">
+			and status=#status#
+			</isNotEmpty>
+			
+	</select>
+	
+	<select id="queryRoleById" parameterClass="java.util.HashMap" resultClass="role">
+		select id,
+			name,
+	        descriptions,
+	        content,
+	        status,
+	        version
+			FROM UA_ROLE where 
+			 id = #id#
+			 <isNotEmpty property = "status">
+			and status=#status#
+			</isNotEmpty>
+	</select>
+	
+	<delete id="deleteRolePermission"  parameterClass="java.util.HashMap">
+      delete      
+      from UA_ROLE_PERMISSION
+      where roleid = #roleId#    
+    </delete>	
+	
+	<select id="queryUserRoleRel" parameterClass="java.util.HashMap" resultClass="userRoleRelation">
+		select id,
+			roleid,
+	        userid,
+	        status 
+			FROM UA_USER_ROLE_RELATION 
+			where 
+			roleId = #roleId#  
+	</select>
+	
+	<update id="updateRole" parameterClass="java.util.HashMap">
+		UPDATE UA_ROLE
+		SET
+			name = #name#,
+			descriptions = #descriptions#,
+			content = #content#,
+			version = version + 1
+		WHERE
+			id = #roleID#
+			and version = #version#
+	</update>
+	
+	<insert id="insertRole" parameterClass="java.util.HashMap">
+		INSERT INTO UA_ROLE 
+		(
+			descriptions,
+			name,
+			content,
+			status,
+			createuser
+		)
+		VALUES
+		(
+			#descriptions#,
+			#name#,
+			#content#,
+			#status#,
+			#createuser#
+		)
+		<selectKey resultClass="int" keyProperty="id" >  
+          SELECT @@IDENTITY AS id  
+    	</selectKey>
+	</insert>
+	<delete id="deleteRole"  parameterClass="java.util.HashMap">
+      delete      
+      from UA_ROLE
+      where id = #roleId#    
+    </delete>
+    
+    <select id="queryAllUserByRole" parameterClass="java.util.HashMap" resultClass="user">
+		select 
+			u.id,
+			u.username,
+			u.pwd,
+			u.chineseName, 
+			u.email,
+			u.telphone,   
+			u.status,
+			u.version   
+		from UA_ROLE r,UA_USER_ROLE_RELATION ur ,UA_USER u 
+		where 
+		r.id=ur.roleID 
+		and u.id = ur.userid 
+		and ur.roleid = #roleId#;
+		
+	</select>
+	
+</sqlMap>

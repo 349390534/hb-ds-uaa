@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="hsbClient" class="com.howbuy.hsb.hsbclient.HSBClient" />
+<!--
+	<bean id="hsbServer" class="com.howbuy.hsb.hsbserver.HSBServer"/>
+ 
+	<bean id="cmNetConfig" class="com.howbuy.hsb.txio.NetConfig">
+		<property name="recognizers"><value>30</value></property>
+		<property name="communMode"><value>0</value></property>
+		<property name="timeout"><value>0</value></property>
+		<property name="ctxPath"><value>context/cm/applicationContext.xml</value></property>
+		<property name="local"><value>true</value></property>
+	</bean>
+
+	<bean id="crmNetConfig" class="com.howbuy.hsb.txio.NetConfig">
+		<property name="recognizers"><value>40</value></property>
+		<property name="communMode"><value>0</value></property>
+		<property name="timeout"><value>0</value></property>
+		<property name="ctxPath"><value>context/crm/applicationContext.xml</value></property>
+		<property name="local"><value>true</value></property>
+	</bean>
+ -->	
+	<bean id="fdbNetConfig" class="com.howbuy.hsb.txio.NetConfig">
+		<property name="recognizers"><value>25</value></property>
+		<property name="communMode"><value>3</value></property>
+		<property name="timeout"><value>0</value></property>
+		<property name="ctxPath"><value>context/fdb/applicationContext.xml</value></property>
+		<property name="local"><value>false</value></property>
+		<!--property name="ip"><value>192.168.203.12</value></property>
+		<property name="port"><value>18001</value></property-->
+		<property name="ip"><value>192.168.101.90</value></property>
+		<property name="port"><value>18001</value></property>
+	</bean>
+	<bean id="webNetConfig" class="com.howbuy.hsb.txio.NetConfig">
+		<property name="recognizers"><value>60</value></property>
+		<property name="communMode"><value>3</value></property>
+		<property name="timeout"><value>0</value></property>
+		<property name="ctxPath"><value>context/applicationContext.xml</value></property>
+		<property name="local"><value>false</value></property>
+		<property name="ip"><value>192.168.101.90</value></property>
+		<property name="port"><value>1861</value></property>
+	</bean>
+</beans>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+	<bean id="perManagerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/auth/permManager/*.htm">PermissionManagerController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 权限管理 -->
+	<bean id="PermissionManagerController" class="com.howbuy.uaa.web.controller.PermissionManagerController">
+    	<property name="permissionManagerService" ref="permissionManagerService"></property>
+    	<property name="index" value="ftl/permission/permissionManager"></property>
+    	<property name="error" value="ftl/error/error"></property>
+    </bean>
+</beans>

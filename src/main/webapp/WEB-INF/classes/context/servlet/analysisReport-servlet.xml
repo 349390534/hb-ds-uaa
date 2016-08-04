@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<!-- <bean id="analysisReportUrlMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/analysisReport/*.htm">analysisReportController</prop>
+                <prop key="/statReport/addjob/*.htm">addStat</prop>
+                <prop key="/statReport/howbuy2ehowbuy.htm">howbuy2ehowbuypvuvController</prop>
+                <prop key="/statReport/Howbuy2EhowbuyIntervals.htm">Howbuy2EhowbuyIntervalsController</prop>
+                <prop key="/visitorAnalysis/*.htm">AccessChannelController</prop>
+            </props>
+        </property>
+    </bean> -->
+    
+   <!--  <bean id="analysisReportController" class="com.howbuy.uaa.web.controller.AnalysisReportController">
+    	<property name="analysisReportService" ref="analysisReportService"></property>
+    	<property name="channelReport" value="ftl/analysisreport/channelReport"></property>
+    	<property name="subchannelReport" value="ftl/analysisreport/subchannelReport"></property>
+    	<property name="tradeDetail" value="ftl/analysisreport/tradeDetail"></property>
+    </bean> -->
+    
+    <!-- <bean id="addStat" class="com.howbuy.uaa.web.controller.StatReportGenController">
+    	<property name="processor" ref="statProcessor"/>
+    	<property name="howbuy2ehowbuyProcessor" ref="howbuy2ehowbuyStatProcessor"></property>
+    	<property name="pvuvProcessor" ref="pvuvStatProcessor"></property>
+    </bean> -->
+    
+    <!-- <bean id="howbuy2ehowbuypvuvController" class="com.howbuy.uaa.web.controller.HowbuyPVUVController">
+    	<property name="analysisReportService" ref="analysisReportService"/>
+    	<property name="formView">
+            <value>ftl/analysisreport/howbuypvuvReport</value>
+        </property>
+        <property name="successView">
+            <value>ftl/include/howbuy2ehowbuStat</value>
+        </property>
+    	<property name="commandName">
+			<value>howbuystatpvuv</value>
+		</property>
+		<property name="commandClass">
+			<value>
+				com.howbuy.uaa.command.HowbuyPVUV
+			</value>
+		</property>
+    </bean> -->
+    <!-- <bean id="Howbuy2EhowbuyIntervalsController" class="com.howbuy.uaa.web.controller.Howbuy2EhowbuyIntervalsController">
+    	<property name="analysisReportService" ref="analysisReportService"/>
+    	<property name="formView">
+            <value>ftl/analysisreport/Howbuy2EhowbuyIntervals</value>
+        </property>
+        <property name="successView">
+            <value>ftl/include/Howbuy2EhowbuyIntervalsStat</value>
+        </property>
+    	<property name="commandName">
+			<value>urlturn</value>
+		</property>
+		<property name="commandClass">
+			<value>
+				com.howbuy.uaa.command.HowbuyPVUV
+			</value>
+		</property>
+    </bean> -->
+    <!-- <bean id="AccessChannelController" class="com.howbuy.uaa.web.controller.AccessChannelController">
+    	<property name="analysisReportService" ref="analysisReportService"/>
+    	<property name="index" value="ftl/analysisconsole/index"></property>
+        <property name="trendGraph" value="ftl/include/indexTrendGraph"></property>
+    	<property name="trendDetail" value="ftl/include/indexTrendDetail"></property>
+    	<property name="channelDetail" value="ftl/include/indexChannelDetail"></property>
+    </bean> -->
+</beans>

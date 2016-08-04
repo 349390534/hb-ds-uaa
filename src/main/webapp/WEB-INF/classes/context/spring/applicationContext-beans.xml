@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<!--更新渠道数据 -->
+	<bean id="updateChannelDayJob" class="com.howbuy.uaa.quartz.UpdateChannelDayJob">
+		<property name="channelUrl" value="${get_channel_url}"></property>
+	</bean>
+
+	<!-- ldap数据 -->
+	<bean id="ldapDayJob" class="com.howbuy.uaa.quartz.LdapDayJob">
+		<property name="ldapTemplate" ref="uaaLdapTemplate"></property>
+	</bean>
+	
+	<bean id="ldapAuthentication" class="com.howbuy.uaa.ldap.LDAPAuthentication">
+		<property name="baseDn" value="${ldap_basedn}"></property>
+		<property name="url" value="${ldap_url}"></property>
+		<property name="principal" value="${ldap_account}"></property>
+		<property name="credentials" value="${ldap_pwd}"></property>
+	</bean>
+	<!-- ldap模板工具类 -->
+	<bean id="uaaLdapTemplate" class="com.howbuy.uaa.ldap.UaaLdapTemplate"
+		init-method="init">
+		<property name="baseDn" value="${ldap_basedn}"></property>
+		<property name="url" value="${ldap_url}"></property>
+		<property name="principal" value="${ldap_account}"></property>
+		<property name="credentials" value="${ldap_pwd}"></property>
+		<property name="authentication" ref="ldapAuthentication"></property>
+	</bean>
+	
+	<bean id="checkReLoginFitler" class="com.howbuy.uaa.filter.CheckReLoginFitler">
+	</bean>
+	
+	<bean id="permissionchantFilter" class="com.howbuy.uaa.filter.PermissionchantFilter">
+		<property name="permissionManagerService" ref="permissionManagerService"></property>
+		<!-- <property name="userManagerService" ref="userManagerService"></property>
+		<property name="roleManagerService" ref="roleManagerService"></property> -->
+	</bean>
+	
+
+</beans>

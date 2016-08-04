@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<!--  定时任务Bean[系统自动生成] -->
+<beans>
+
+    <!--reload url mapping properties-->
+    <!-- <bean id="mappingReader" name="mappingReader" lazy-init="false" init-method="reload"
+          class="com.howbuy.uaa.core.mapping.MappingReader">
+        <property name="propertiesResource" value="classpath:mapping.properties"/>
+    </bean> -->
+    <!--<bean id="urlMappingServiceTask"-->
+    <!--class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+    <!--<property name="targetObject">-->
+    <!--<ref bean="mappingReader"/>-->
+    <!--</property>-->
+    <!--<property name="concurrent">-->
+    <!--<value>false</value>-->
+    <!--</property>-->
+    <!--<property name="targetMethod">-->
+    <!--<value>reload</value>-->
+    <!--</property>-->
+    <!--</bean>-->
+
+    <!--<bean id="urlMappingServiceTaskTrigger"-->
+    <!--class="org.springframework.scheduling.quartz.CronTriggerBean">-->
+    <!--<property name="jobDetail">-->
+    <!--<ref bean="urlMappingServiceTask"/>-->
+    <!--</property>-->
+    <!--<property name="cronExpression">-->
+    <!--<value>0 0 * * * ?</value>-->
+    <!--</property>-->
+    <!--</bean>-->
+
+    <!--<bean id="bookerPvStatHiveService" lazy-init="false" init-method="getBookerPvStat" class="com.howbuy.uaa.hive.BookerPvStatHiveService">-->
+    <!-- <bean id="bookerPvStatHiveService" class="com.howbuy.uaa.hive.BookerPvStatHiveService">
+        <property name="hiveDao" ref="hiveDao"/>
+        <property name="bookerPvStatService" ref="bookerPvStatService"/>
+        <property name="chnChannelService"  ref="channelService"></property>
+    </bean>
+    <bean id="quartzBookerPvStatTask"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="bookerPvStatHiveService"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>getBookerPvStat</value>
+        </property>
+    </bean> -->
+
+    <!-- <bean id="quartzBookerPvStatTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="quartzBookerPvStatTask"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 7,13,17 * * ?</value>
+        </property>
+    </bean> -->
+
+
+    <!--<bean id="bookerPvTrackHiveService" lazy-init="false" init-method="getBookerTrack" class="com.howbuy.uaa.hive.BookerPvTrackHiveService">-->
+    <!-- <bean id="bookerPvTrackHiveService" class="com.howbuy.uaa.hive.BookerPvTrackHiveService">
+        <property name="hiveDao" ref="hiveDao"/>
+        <property name="bookerPvTrackService" ref="bookerPvTrackService"/>
+        <property name="bookerPvDao" ref="bookerPvDao"/>
+        <property name="bookUserDao" ref="bookUserDao"/>
+    </bean>
+
+    <bean id="quartzBookerPvTrackTask"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="bookerPvTrackHiveService"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>getBookerTrack</value>
+        </property>
+    </bean>
+
+    <bean id="quartzBookerPvTrackTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="quartzBookerPvTrackTask"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 5,9,11,15 * * ?</value>
+        </property>
+    </bean> -->
+
+    <!--<bean id="pvStatHiveService" lazy-init="false" init-method="stat" class="com.howbuy.uaa.hive.PvStatHiveService">-->
+    <!-- <bean id="pvStatHiveService" class="com.howbuy.uaa.hive.PvStatHiveService">
+        <property name="hiveDao" ref="hiveDao"/>
+        <property name="chnChannelService" ref="channelService"/>
+        <property name="pvStatService" ref="pvStatService"/>
+        <property name="pvStatDao" ref="pvStatDao"/>
+    </bean> -->
+
+    <!--预约用户历史-->
+    <!-- <bean id="quartzBookerPvHistoryTask"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="bookerPvHistoryService"/>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+        <property name="targetMethod">
+            <value>bookerVisitInterval</value>
+        </property>
+    </bean>
+
+    <bean id="quartzBookerPvHistoryTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="quartzBookerPvHistoryTask"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 7,12 * * ?</value>
+        </property>
+    </bean>
+
+
+    <bean id="scheduler" autowire="no"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref local="quartzBookerPvStatTaskTrigger"/>
+                <ref local="quartzBookerPvTrackTaskTrigger"/>
+                <ref local="quartzBookerPvHistoryTaskTrigger"/>
+            </list>
+        </property>
+    </bean> -->
+</beans>

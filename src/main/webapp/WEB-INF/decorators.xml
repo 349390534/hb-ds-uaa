@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/decorators">
+    <excludes>
+
+    </excludes>
+
+    <decorator name="uaa" page="uaa.ftl">
+        <pattern>/uaa/*</pattern>
+    </decorator>
+
+
+</decorators>

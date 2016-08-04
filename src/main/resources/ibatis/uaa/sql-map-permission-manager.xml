@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="PermissionManager">
+	<typeAlias alias="rolePermission" type="com.howbuy.uaa.persistence.RolePermission"/>
+	<typeAlias alias="permission" type="com.howbuy.uaa.persistence.Permission"/>
+	<typeAlias alias="permissionRel" type="com.howbuy.uaa.persistence.PermissionRelation"/>
+	<typeAlias alias="userPermissionRelation" type="com.howbuy.uaa.persistence.UserPermissionRelation"/>
+	
+	<select id="queryChildPermission" parameterClass="java.util.HashMap" resultClass="permission">
+		SELECT 
+			p.id,
+			p.permissionId,
+			p.name,
+			p.descriptions,
+			p.rescourcelevel,
+			p.status,
+			p.url,
+			p.version,
+			p.url_channel urlChannel
+			FROM UA_PERMISSION p, UA_PERMISSION_RELATION upr
+			WHERE  upr.childId = p.id  and upr.parentId=#id#
+	</select>
+	
+	<select id="queryPermission" parameterClass="java.util.HashMap" resultClass="permission">
+		select  
+			ap.id,
+			ap.permissionId,
+			ap.name,
+			ap.descriptions,
+			ap.rescourcelevel,
+			ap.status,
+			ap.url,
+			ap.version,
+			ap.url_channel urlChannel
+		from UA_PERMISSION ap 
+		WHERE
+			1=1
+			<isNotEmpty property = "status">
+			and ap.status = #status#  
+			</isNotEmpty>
+			<isNotEmpty property = "level">
+			and ap.rescourcelevel = #level#
+			</isNotEmpty>
+			 ORDER BY ap.p_order ASC
+	</select>
+	
+	<select id="queryPermissionByPermissionId" parameterClass="java.util.HashMap" resultClass="permission">
+		select  
+			ap.id,
+			ap.permissionId,
+			ap.name,
+			ap.descriptions,
+			ap.rescourcelevel,
+			ap.status,
+			ap.url ,
+			ap.url_channel urlChannel
+		from UA_PERMISSION ap 
+		WHERE
+			1=1
+			<isNotEmpty property = "status">
+			and ap.status = #status#  
+			</isNotEmpty>
+			<isNotEmpty property = "permissionId">
+			and ap.permissionid = #permissionId#
+			</isNotEmpty>
+			 ORDER BY ap.p_order ASC
+	</select>
+	
+	<update id="updatePermission" parameterClass="java.util.HashMap">
+		UPDATE UA_PERMISSION
+		SET
+			name = #name#,
+			descriptions = #descriptions#,
+			permissionid = #permissionId#,
+			version = version + 1 
+		WHERE
+			id = #id#
+			and version = #version# 
+	</update>
+	
+	<delete id="deletePermission"  parameterClass="java.util.HashMap">
+      delete      
+      from UA_PERMISSION
+      where id = #id#    
+    </delete>
+	
+	<insert id="insertPermission" parameterClass="java.util.HashMap">
+		INSERT INTO UA_PERMISSION 
+		(
+			permissionId,
+			descriptions,
+			name,
+			rescourcelevel,
+			status
+		)
+		VALUES
+		(
+			#permissionId#,
+			#descriptions#,
+			#name#,
+			#rescourcelevel#,
+			#status#
+		)
+		<selectKey resultClass="int" keyProperty="id" >  
+          SELECT @@IDENTITY AS id  
+    	</selectKey>
+	</insert>
+	<update id="updatePermissionRelation" parameterClass="java.util.HashMap">
+		UPDATE UA_PERMISSION_RELATION
+		SET
+			parentID = #parentId#,
+			version = version + 1
+			
+		WHERE
+			childID = #permissionId#
+			and version = #version#
+	</update>
+	<delete id="deletePermissionRelation"  parameterClass="java.util.HashMap">
+      delete      
+      from UA_PERMISSION_RELATION
+      where childID = #permissionId#
+      and parentID = #parentId#    
+    </delete>
+    
+    <insert id="insertPermissionRelation" parameterClass="java.util.HashMap">
+		INSERT INTO UA_PERMISSION_RELATION
+		(
+			childID,
+			parentID,
+			status
+		)
+		VALUES
+		(
+			#childId#,
+			#parentId#,
+			#status#
+		)
+	</insert>
+    <select id="queryUserPermissionRel" parameterClass="java.util.HashMap" resultClass="userPermissionRelation">
+		select  
+			ap.id,
+			ap.permissionID,
+			ap.userid
+		from UA_USER_PERMISSION_RELATION ap 
+		WHERE
+			1=1
+			<isNotEmpty property = "permissionId">
+			and ap.permissionid = #permissionId#
+			</isNotEmpty>
+	</select>
+    
+     <select id="queryRolePermissionByPerID" parameterClass="java.util.HashMap" resultClass="rolePermission">
+		select  
+			ap.id,
+			ap.permissionID,
+			ap.roleID
+		from UA_ROLE_PERMISSION ap 
+		WHERE
+			1=1
+			<isNotEmpty property = "permissionId">
+			and ap.permissionid = #permissionId#
+			</isNotEmpty>
+	</select>
+	
+	<select id="queryPermissionById" parameterClass="java.util.HashMap" resultClass="permission">
+		select  
+			ap.id,
+			ap.permissionId,
+			ap.name,
+			ap.descriptions,
+			ap.rescourcelevel,
+			ap.status,
+			ap.url,
+			ap.version ,
+			ap.url_channel urlChannel
+		from UA_PERMISSION  ap
+		WHERE
+			ap.id=#id#
+			
+	</select>
+	
+	<select id="queryPerRelByChilIdAndParentID" parameterClass="java.util.HashMap" resultClass="permissionRel">
+		select  
+			ap.childId,
+			ap.parentId,
+			ap.version,
+			ap.id
+		from UA_PERMISSION_RELATION  ap
+		WHERE
+			ap.childId=#childId#
+			and ap.parentId = #parentId#
+			
+	</select>
+</sqlMap>

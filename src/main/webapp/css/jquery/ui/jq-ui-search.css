@@ -1,0 +1,12 @@
+@charset "utf-8";
+/* CSS Document */
+.ui-autocomplete {position: absolute;top:0;left:0;cursor:default;}
+.ui-autocomplete,.ui-autocomplete li {margin:0;padding:0; list-style:none;font:normal 12px/22px Arial, Helvetica, sans-serif;}
+.ui-autocomplete {width:300px;background:#fff;border:1px solid #9c9c9c; text-align:left;}
+.ui-autocomplete li {height:22px;width:100%;overflow:hidden;float:left;}
+.ui-autocomplete li a {display:block;height:22px;color:#333;}
+.ui-autocomplete li a span {float:left;height:22px;overflow:hidden;padding:0 0 0 5px;}
+.ui-autocomplete li a span strong {color:#c00;font-weight:normal;}
+.ui-autocomplete li a:hover {background:#deefff;}
+.ui-autocomplete li a.ui-state-focus {background:#deefff;}
+.ui-autocomplete li a.auto-view-all {text-align:right;padding-right:5px;}

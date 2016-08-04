@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="fundsaleMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/auth/fundsale/*.htm">fundSaleController</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="fundSaleController" class="com.howbuy.uaa.web.controller.FundSaleController">
+    	<property name="dataxApiService" ref="dataxApiService"></property>
+    	<property name="index" value="ftl/fundsale/index"></property>
+    	<property name="graphViewSale" value="ftl/fundsale/saleIndex"></property>
+    	<property name="graphViewIncome" value="ftl/fundsale/incomeIndex"></property>
+    </bean>
+    
+</beans>

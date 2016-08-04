@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="BookerPvHistory">
+
+    <typeAlias alias="bookerStatDate" type="com.howbuy.uaa.dto.BookerStatForm"/>
+    <typeAlias alias="bookerPv" type="com.howbuy.uaa.persistence.BookerPv"/>
+    <typeAlias alias="bookerPvHistory" type="com.howbuy.uaa.persistence.BookerPvHistory"/>
+
+    <!--取最大统计日期-->
+    <select id="selectMaxDate" parameterClass="java.util.Map" resultClass="java.lang.String">
+      select max(statdate) from booker_pv_history t
+    </select>
+
+    <!--取待统计的cookie及日期-->
+    <select id="selectBookerStatDate" parameterClass="java.util.Map" resultClass="bookerStatDate">
+        select distinct t.cookie, substr(t.visittime, 0, 10)  as statDate
+        from booker_pv t
+        where substr(t.visittime, 0, 10) <![CDATA[ < ]]> #maxDate#
+        and substr(t.visittime, 0, 10) <![CDATA[ > ]]> #minDate#
+        order by substr(t.visittime, 0, 10)
+    </select>
+
+    <!--取最后访问日期以外的上次访问日期-->
+    <select id="selectLastVisitDate" parameterClass="java.util.Map" resultClass="java.lang.String">
+        select max(substr(t.visittime, 0, 10)) as lastVisitDate
+        from booker_pv t
+        where substr(t.visittime, 0, 10) <![CDATA[ < ]]> #statDate#
+        and cookie = #cookie#
+    </select>
+
+    <!--取访问历史，并按间隔时间排序-->
+    <select id="selectBookerPvHistory" parameterClass="java.util.Map" resultClass="bookerPvHistory">
+        select  id, statdate, cookie, lastvisitdate, intervals
+          from booker_pv_history t
+         where t.statdate = #statDate#
+         order by t.intervals desc
+    </select>
+
+    <!--取最后访问的轨迹-->
+    <select id="selectStatDatePvTrack" parameterClass="java.util.Map" resultClass="bookerPv">
+        select *
+          from booker_pv t
+         where substr(t.visittime, 0, 10) = #statDate#
+           and cookie = #cookie#
+          order by t.visittime
+    </select>
+</sqlMap>

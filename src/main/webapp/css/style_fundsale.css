@@ -1,0 +1,180 @@
+@charset "utf-8";
+/*	@Created by yuchunming
+	@Upload date: 2015/3/3
+*/
+
+/*明细*/
+.detail_fs {margin:30px 20px 0;border:1px solid #dbe3eb;background: #fff;width: 1130px;}
+.detail_fs .tab_menu {background:#f1f1f1;height:65px;}
+.detail_fs .tab_menu li {float: left;height: 65px;line-height: 65px;cursor: pointer;padding: 0 30px;font-size: 14px;}
+.detail_fs .tab_menu li.current {background: #fff;border-top-color:#30a5ff;}
+.detail_filter {padding:10px;border-bottom: 1px solid #dbe3eb;}
+.detail_filter dl {overflow: hidden;zoom:1;padding: 10px;}
+.detail_filter dl dt {float: left;width: 100px;text-align: right;}
+.detail_filter dl dd {float: left;}
+.detail_filter dl dd ul li {float: left;}
+.detail_filter dl dd ul li label{margin:0 15px;}
+.detail_fs .tab_menu2 {background:#f1f1f1;height:65px;}
+.detail_fs .tab_menu2 li {float: left;height: 65px;width: 20%;line-height: 65px;cursor: pointer;text-align: center; font-size: 14px;}
+.detail_fs .tab_menu2 li.current {background: #fff;border-top-color:#30a5ff;}
+
+.detail_filter dl dd ul li input {margin-right:5px;position: relative;top:1px;}
+.detail_filter .table1 {width: 870px;padding: 20px 10px 10px;}
+.detail_filter .table1 td{line-height: 35px;text-align: left;}
+.detail_filter .table1 .w1 {width: 100px;margin-left: 15px;text-align: right !important}
+.detail_filter .table1 label{margin:0 0 0 15px;}
+.detail_filter .table1 input {margin-right:5px;position: relative;top:1px;}
+.detail_a{position:relative;z-index:10;}
+.detail_a img{position:absolute;top: 1px;z-index:12;top: 1px\0;left: 0px\0;top: 1px\9;left: 0px\9;_top: 3px;_left: 2px;}
+.detail_b{z-index:11;}
+
+.detail_fs .tools {text-align: right;margin: 20px 20px 0 0;}
+.detail_fs .tools input {margin-left: 20px;}
+.det-datalist {margin:20px;overflow-x:auto;}
+.det-datalist .det-d-qdmx thead a{color:#333;}
+.det-datalist .det-d-qdmx thead a:hover{color:#333;text-decoration: none;}
+
+.det-datalist table {width: auto;}
+.det-datalist table td {height: 30px;border:1px solid #dbe3eb;}
+.det-datalist table .tit{background: #dbe3eb;}
+.det-datalist table .tdl {padding-left:20px;}
+.det-datalist table .tdl2 {padding-left:25px;text-align: left;}
+.det-datalist table .bottom {background: #fafafa;}
+.det-datalist table .name-1 {padding-left:0;text-align: left;}
+.det-datalist table .name-1-1 {padding-left:32px;text-align: left;}
+.det-datalist table .name-2 {padding-left:16px;text-align: left;}
+.det-datalist table .name-2-1 {padding-left:40px;text-align: left;}
+.det-datalist table .n-open,.det-datalist table .n-close {background: url(../images/open.png) no-repeat;padding-left: 20px;color: #333;}
+.det-datalist table .n-open:hover,.det-datalist table .n-close:hover {text-decoration: none;color: #333;}
+.det-datalist table .n-open {background-position: 4px 3px;}
+.det-datalist table .n-close {background-position: 4px -26px;}
+.page{width: 1130px;margin: 20px;color: #666;}
+.page ul{padding-right: 40px;}
+.page ul li{width: 40px;float: left;}
+.page ul li a{color: #666;}
+.page ul li a:hover{color: #1484d9;}
+.page ul li span{width: 20px;height: 20px;background-color: #1484d9;display: inline-block;color: #fff;text-align: center;line-height: 20px;margin-left: 10px;}
+.page ul li span a{display: inline-block;color: #fff;}
+.page ul li span a:hover{color: #fff;}
+.det-page {margin-top: 15px;overflow: hidden;zoom:1;}
+.det-page .bar1 {line-height:26px;color: #666;}
+.det-page .bar1 select {height: 26px;margin-left: 5px;width:50px;}
+.det-page .bar2 {overflow: hidden;zoom:1;}
+.det-page .bar2 li {float: left;height: 24px;line-height: 24px;margin-left: 5px;text-align: center;color: #999;}
+.det-page .bar2 li a {color: #333;}
+.det-page .bar2 li a:hover {text-decoration: none;}
+.det-page .bar2 li.num a {display: block;width:24px;}
+.det-page .bar2 li.num a:hover {background: #ddf0fe;}
+.det-page .bar2 li.current a,.det-page .bar2 li.current a:hover {background:#30a5ff;color: #fff;}
+.sort-up,.sort-down {background: url(../images/sorticon.png) no-repeat right 0;padding-right:12px;color: #333;}
+.sort-up:hover,.sort-down:hover {text-decoration: none;color: #333;}
+.sort-up {background-position:right -19px;}
+.sort-down {background-position:right 7px;}
+
+.det-datalist .det-d-qdmx2 table{text-align: center;}
+
+.det-datalist .det-d-qdmx2 td {height: 30px;border:1px solid #dbe3eb;}
+.det-datalist .det-d-qdmx2 .tdl {padding-left:5px;}
+.det-d-qdmx2head {width: 1090px;margin: 20px 0 0 20px;}
+.det-d-qdmx2head .tit{background: #dbe3eb;}
+.det-d-qdmx2head thead td{color:#333;border-left:1px solid #dedede;border-right:1px solid #dedede;padding: 10px 0;}
+.det-d-qdmx2head thead a:hover{color:#333;text-decoration: none;}
+.det-datalist .det-d-qdmx2 .tdr{text-align: right;padding: 0 5px 0 0;}
+.det-d-qdmx2 .tdl{text-align: left;}
+
+.det-datalist .det-d-qdmx3{text-align: center;}
+.det-datalist .det-d-qdmx3 .tdr{padding: 0 10px 0 0;}
+.det-datalist .det-d-qdmx3 td {height: 30px;border:1px solid #dbe3eb;padding: 0 0 0 5px;}
+.det-datalist .det-d-qdmx3 .tdl {padding-left:5px;}
+.det-datalist .det-d-qdmx3 thead td{color:#333;border-left:1px solid #dedede;border-right:1px solid #dedede;}
+.det-datalist .det-d-qdmx3 thead a:hover{color:#333;text-decoration: none;}
+
+/*指标解释*/
+.index-exp {margin:30px 20px 0;width: 1130px;}
+.index-exp .title {padding-bottom:5px;}
+.index-exp .title h3 {font-size:16px;font-weight: normal;}
+.index-exp table {background: #fff;}
+.index-exp table td {line-height: 30px;border:1px solid #dbe3eb;padding-left:10px;}
+.index-exp table .tit td {background: #dbe3eb;height: 50px;}
+
+/*footer*/
+.footer {padding:10px 0;text-align: center;color: #999;line-height: 22px;}
+.footer a {color: #999;}
+.footer a:hover {color: #c00;}
+/*渠道管理*/
+.qd_con{padding:10px 0 10px 20px;}
+.grade1{width: 160px;float: left; padding-right: 20px;margin:10px 0;}
+.grade1 .qd_list{width:160px;height:280px;overflow-y: auto;font-family: "微软雅黑";font-size: 14px;outline: none;margin-top: 15px;}
+.creat{text-align: right;margin-top: 10px;}
+.creat input{margin-left: 10px;}
+.change{margin-top:55px;}
+.change_tt{font-size: 15px;}
+.change_input{margin-top: 10px;}
+.change_name{width: 100px;font-family: "微软雅黑";line-height: 22px; height: 22px;}
+.qd_show{padding:50px 10px 10px 20px;width:500px;}
+.qd_show table{width:100%;text-align: center;border-collapse:collapse;border-spacing: 0;}
+.qd_show table tr td{height: 30px;border: solid 1px #f1f4f7;}
+.qd_show table tr .t{background-color:#f1f4f7;}
+.website{padding:10px 10px 13px;width:480px;background-color:#f1f4f7;margin-top: 20px;}
+.website p{height:40px;font-size: 14px;line-height: 20px;}
+.website p span{display: inline-block;width:400px;}
+.copysite{height: 24px;width:315px;}
+
+/* */
+.drkh-radio{width: 250px;margin: 0 0 0 300px;}
+.drkh-radio label{margin: 0 10px;}
+.drkh-radio input{position: relative;top: 2px;padding-left: 5px;}
+.fund_detail_filter{overflow-x: auto;}
+ 
+/*新增销量分析*/
+.filter_d {width: 1100px;background: #fff;border:1px solid #dbe3eb;margin:20px 20px 0;padding:15px;}
+.filter_d dl {overflow: hidden;zoom:1;}
+.filter_d dl dt {width: 85px;float: left;line-height: 26px;font-size:16px;}
+.filter_d dl dd {float: left;width: 85%;}
+.filter_d dl dd ul li {float: left;width: 80px;text-align: center;margin:2px 10px 2px 0;}
+.filter_d dl dd ul li a {display: block;height:26px;line-height: 26px;border-radius:2px;color: #666;}
+.filter_d dl dd ul li a:hover {text-decoration: none;background: #ddf0fe;color: #666;}
+.filter_d dl dd ul li.current a,.filter_b dl dd ul li.current a:hover {background:#f1f1f1;}
+.filter_d select {height: 26px;padding: 0 8px;text-align:left;margin-right: 10px;}
+.chartbox_tab_xl {background: #fff;overflow: hidden;border:1px solid #dbe3eb;}
+.chartbox_tab_xl .bar {background: #d5d5d5;height: 40px;text-align:left;}
+.chartbox_tab_xl .bar ul{min-width: 1080px;}
+.chartbox_tab_xl .bar ul li {float: left;height: 30px;cursor: pointer;padding: 0 0 0 15px;font-size:14px;line-height: 22px;padding-top:10px;width: 109px;
+text-align: center;border-left: solid 1px #fff;}
+.chartbox_tab_xl .bar ul li:hover {background:#fafafa;}
+.chartbox_tab_xl .bar ul li.current {background: #fff;}
+.chartbox_tab_xl .bar ul li p{font-weight:bold;}
+.chartbox_tab_xl .box .con {padding: 10px;}
+.chartbox_tab_xl .box .con .ll_chart{width: 1010px;margin: 10px auto 0;}
+.filter_e {line-height: 28px;margin-left: 120px;margin-top: 10px;}
+.filter_e li {float: left;}
+.filter_e li .bar1 {margin-right: 20px;height: 28px;}
+.detail_fs .tools1 {text-align: right;margin: 20px 20px 20px 0;}
+.detail_fs .tools1 input {margin-left: 20px;}
+.detail_fs .tab_menu1,.detail_fs .tab_menu3,.detail_fs .tab_menu6,.detail_fs .tab_menu7 {background:#d5d5d5;height:40px;}
+.detail_fs .tab_menu1 li,.detail_fs .tab_menu3 li,.detail_fs .tab_menu6 li,.detail_fs .tab_menu7 li {float: left;height: 40px;line-height: 40px;cursor: pointer;padding: 0 30px;font-size: 14px;}
+.detail_fs .tab_menu1 li.current,.detail_fs .tab_menu3 li.current,.detail_fs .tab_menu6 li.current,.detail_fs .tab_menu7 li.current {background: #fff;border-top-color:#30a5ff;}
+.f_find{padding: 20px 0 10px;margin-left:60px;}
+.f_find .f_code{margin: 0 15px;padding-left: 10px;}
+.f_find p{text-align: right;padding-right: 70px;}
+.f-datalist{text-align: center;padding: 10px 0;}
+.filter_d .tab_menu4 li{height: 40px;line-height: 40px;padding: 0 10px;}
+.filter_d .tab_menu4 li.current{background-color: #e5e5e5;}
+.tab_menu5{background:#d5d5d5;height:40px;}
+.tab_menu5 li{float: left;height: 40px;line-height: 40px;cursor: pointer;padding: 0 30px;font-size: 14px;}
+.tab_menu5 li.current{background-color: #fff;}
+.gaikuang_con{padding-bottom: 10px;}
+.chartbox_tab_qk {background: #fff;overflow: hidden;border:1px solid #dbe3eb;}
+.chartbox_tab_qk .bar {background: #d5d5d5;height: 40px;text-align:left;}
+.chartbox_tab_qk .bar ul{min-width: 1080px;}
+.chartbox_tab_qk .bar ul li {float: left;height: 30px;cursor: pointer;padding: 0 0 0 15px;font-size:14px;line-height: 22px;padding-top:10px;width: 145px;
+text-align: center;border-left: solid 1px #fff;}
+.chartbox_tab_qk .bar ul li:hover {background:#fafafa;}
+.chartbox_tab_qk .bar ul li.current {background: #fff;}
+.chartbox_tab_qk .bar ul li p{font-weight:bold;}
+.chartbox_tab_qk .box .con {padding: 10px;}
+.chartbox_tab_qk .box .con .ll_chart{width: 1010px;margin: 10px auto 0;}
+.yh_select{font-size:14px;padding-left:120px;padding-right:20px;line-height:28px;margin: 20px 0;}
+
+
+

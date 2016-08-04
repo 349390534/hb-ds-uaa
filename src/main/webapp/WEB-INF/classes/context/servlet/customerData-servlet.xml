@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="customerDataMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/auth/customerData/*.htm">customerDataController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 好买网站-访问渠道 -->
+	<bean id="customerDataController" class="com.howbuy.uaa.web.controller.CustomerDataController"  init-method="init">
+    	<property name="index" value="ftl/customerData/customerData"></property>
+    	<property name="customerGraph" value="ftl/customerData/customerGraph"></property>
+    	<property name="custtrendDetail" value="ftl/include/custTrendDetail"></property>
+    	<property name="custchannelDetail" value="ftl/include/custChannelDetail"></property>
+    	<property name="custchannelDetailTbody" value="ftl/include/custChannelDetailTbody"></property>
+    	<property name="custTrendDetailTbody" value="ftl/include/custTrendDetailTbody"></property>
+        <property name="channelUrl" value="${get_channel_url}"></property>
+        <property name="custUrl" value="${api_report_gmtj_cust}"></property>
+    	<property name="sjhzUrl" value="${api_report_gmtj_sjhz}"></property>
+    </bean>
+    
+</beans>

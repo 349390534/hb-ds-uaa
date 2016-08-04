@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="GenericSql">
+
+	<!-- 动态updateSQL -->
+	<statement id="UpdateObjectVOSql" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		update
+		<isNotEmpty property="sqltablename">$sqltablename$</isNotEmpty>
+		set
+		<isNotNull property="sqlvalue">
+			<iterate prepend=" " property="sqlvalue" conjunction=",">
+				$sqlvalue[].key$ = #sqlvalue[].value#
+			</iterate>
+		</isNotNull>
+		<dynamic prepend="where">
+			<isNotNull property="sqlwhere">
+				<iterate prepend=" " property="sqlwhere" conjunction="and">
+					$sqlwhere[].key$ = #sqlwhere[].value#
+    		</iterate>
+			</isNotNull>
+		</dynamic>
+	</statement>
+
+	<!-- 动态批量updateSQL -->
+	<statement id="UpdateObjectVOSqlBatch" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		update
+		<isNotEmpty property="sqltablename">$sqltablename$</isNotEmpty>
+		set
+		<isNotNull property="sqlvalue">
+			<iterate prepend=" " property="sqlvalue" conjunction=",">
+				$sqlvalue[].key$ = #sqlvalue[].value#  
+			</iterate>
+		</isNotNull>
+		<dynamic prepend="where">
+			<isNotNull property="sqlwhere">
+				<isNotNull property="sqltablepkname">
+					$sqltablepkname$
+				</isNotNull>
+				<iterate prepend=" " property="sqlwhere" open=" in (" close=")"
+					conjunction=",">
+					#sqlwhere[]#
+    			</iterate>
+			</isNotNull>
+		</dynamic>
+	</statement>
+
+	<!-- 动态InsertSQL -->
+	<statement id="InsertObjectVOSql" parameterClass="java.util.HashMap">
+		insert into
+		<isNotEmpty property="sqltablename">$sqltablename$</isNotEmpty>
+
+		<isNotEmpty property="sqlvalue">$sqlvalue$</isNotEmpty>
+		values
+		<isNotNull property="sqlwhere">
+			<iterate prepend=" " property="sqlwhere" open="(" close=")"
+				conjunction=",">
+				#sqlwhere[].value#    					
+			</iterate>
+		</isNotNull>
+	</statement>
+
+	<!-- 动态DeleteSQL -->
+	<statement id="DeleteObjectVOSql" parameterClass="java.util.HashMap">
+		delete from
+		<isNotEmpty property="sqltablename">$sqltablename$</isNotEmpty>
+
+		<dynamic prepend="where">
+			<isNotNull property="sqlwhere">
+				<iterate prepend=" " property="sqlwhere" conjunction="and">
+					$sqlwhere[].key$ = #sqlwhere[].value#    			
+    		</iterate>
+			</isNotNull>
+		</dynamic>
+	</statement>
+
+	<!-- 动态SELECT SQL -->
+	<statement id="SelectObjectVOSql" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap" remapResults="true">
+		select
+		<isNotEmpty property="sqlvalue">$sqlvalue$</isNotEmpty>
+		from
+		<isNotEmpty property="sqltablename">$sqltablename$</isNotEmpty>
+		<dynamic prepend="where">
+			<isNotNull property="sqlwhere">
+				<iterate prepend=" " property="sqlwhere" conjunction="and">
+					$sqlwhere[].key$ = #sqlwhere[].value#
+    		</iterate>
+			</isNotNull>
+		</dynamic>
+	</statement>
+
+	<!-- 动态SELECT SQL -->
+	<statement id="SelectCountObjectVOSql" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer" remapResults="true">
+		select count(1)
+		from
+		<isNotEmpty property="sqltablename">$sqltablename$</isNotEmpty>
+		<dynamic prepend="where">
+			<isNotNull property="sqlwhere">
+				<iterate prepend=" " property="sqlwhere" conjunction="and">
+
+					$sqlwhere[].key$ = #sqlwhere[].value#
+    			
+    		</iterate>
+			</isNotNull>
+		</dynamic>
+	</statement>
+
+	<!-- 获取ID值 -->
+	<statement id="tablePK" parameterClass="String" resultClass="java.lang.Long">
+		$sqlVaule$
+  	</statement>
+
+	<!--&lt;!&ndash; 联合查询常量配置 &ndash;&gt;-->
+	<!--<select id="findConstantConfig" parameterClass="com.howbuy.constant.dto.ConstantConfig"-->
+		<!--resultClass="com.howbuy.constant.dto.ConstantConfig">-->
+		<!--select cc.constantconfigid, cc.constantmappingid,-->
+		<!--cc.constantconfigkey, cc.constantconfigname,-->
+		<!--cm.constantmappingtable||'.'||cm.constantmappingcolumn as tablecolumn-->
+		<!--from constantconfig cc left join-->
+		<!--constantmapping cm on-->
+		<!--cc.constantmappingid = cm.constantmappingid-->
+	<!--</select>-->
+
+
+	<!--<select id="findPartitionBaseNode" resultClass="com.howbuy.constant.dto.PartitioningConfig">-->
+		<!--SELECT-->
+		<!--pc.partitioningId, pc.tableName, pc.nodeTableName,-->
+		<!--pc.partitioningTableName, pc.partitioningGroup FROM partitioningconfig-->
+		<!--pc-->
+	<!--</select>-->
+
+	<!--<select id="findAllNodeTableInfo" parameterClass="java.util.HashMap"-->
+		<!--resultClass="java.util.HashMap">-->
+		<!--SELECT $partitioningTableName$ as partitioningTableName,-->
+		<!--$partitioningGroup$ as partitioningGroup FROM $nodeTableName$-->
+	<!--</select>-->
+</sqlMap>

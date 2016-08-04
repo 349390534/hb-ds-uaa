@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="analysisHowbuyWebsiteMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/auth/howbuywebsite/*.htm">howbuyWebSiteController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 好买网站-访问渠道 -->
+	<bean id="howbuyWebSiteController" class="com.howbuy.uaa.web.controller.HowbuyWebSiteController"  init-method="init">
+    	<property name="analysisHowbuyWebsiteService" ref="analysisHowbuyWebsiteService"></property>
+    	<property name="analysisDataToolService" ref="analysisDataToolService"></property>
+    	<property name="index" value="ftl/analysisconsole/index"></property>
+        <property name="trendGraph" value="ftl/include/indexTrendGraph"></property>
+    	<property name="trendDetail" value="ftl/include/indexTrendDetail"></property>
+    	<property name="trendDetailTable" value="ftl/include/indexTrendDetailTable"></property>
+    	<property name="channelDetail" value="ftl/include/indexChannelDetail"></property>
+    	<property name="indexQueryRouteOne" value="ftl/include/indexQueryRouteOne"></property>
+    	<property name="indexQueryRouteTwo" value="ftl/include/indexQueryRouteTwo"></property>
+    	<property name="indexQueryRouteThree" value="ftl/include/indexQueryRouteThree"></property>
+    </bean>
+    
+</beans>

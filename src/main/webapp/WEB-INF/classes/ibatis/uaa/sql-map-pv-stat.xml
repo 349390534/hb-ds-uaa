@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="PvStat">
+    <typeAlias alias="pvStatForm" type="com.howbuy.uaa.dto.PvStatForm"/>
+    <select id="selectMaxDate" parameterClass="java.util.Map" resultClass="java.lang.String">
+      select max(statdate) from pv_stat t where t.type <![CDATA[ = ]]> #type#
+    </select>
+
+    <select id="selectPvStatForms" parameterClass="java.util.Map" resultClass="pvStatForm">
+select *
+  from (select rownum srcnum, srcurl, pv srcpv
+          from pv_stat t
+         where type = '2'
+           and t.statdate = #statDate#
+         order by t.pv desc) aa
+  left join (select rownum tonum,tt.* from (select  tourl, pv topv
+               from pv_stat t
+              where type = '3'
+                and t.statdate = #statDate#
+              order by t.pv desc)tt) bb on aa.srcnum = bb.tonum
+  left join (select rownum booknum, c.*
+          from (select url bookerurl, count(*) num
+                  from booking_user b
+                 where b.booktime like #statDate#||'%'
+                 group by url
+                 order by num desc) c) cc on bb.tonum = cc.booknum
+  order by aa.srcnum
+	</select>
+
+    <select id="selectPvStat" parameterClass="java.util.Map" resultClass="java.lang.Long">
+select sum(pv) sumpv
+  from pv_stat t
+ where  type = '1'
+   and t.statdate = #statDate#
+   and t.subchannel=#subchannel#
+	</select>
+
+    <select id="selectSubChannels" parameterClass="java.util.Map" resultClass="java.lang.String">
+        select distinct subchannel from pv_stat t where t.subchannel is not null
+	</select>
+</sqlMap>

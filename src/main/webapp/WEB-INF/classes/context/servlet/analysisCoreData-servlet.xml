@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="analysisCoreDataMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/auth/fund/*.htm">FundController</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="FundController" class="com.howbuy.uaa.web.controller.FundController" init-method="init">
+    	<property name="analysisCoreDataService" ref="analysisCoreDataService"></property>
+    	<property name="index" value="ftl/analysisconsole/fund"></property>
+    	<property name="wirelessWd" value="ftl/include/fundHowbuyWirelessWd"></property>
+    	<property name="fundGraph" value="ftl/include/fundGraph"></property>
+    	<property name="fundChannelDetail" value="ftl/include/fundChannelDetail"></property>
+    	<property name="fundTrendDetail" value="ftl/include/fundTrendDetail"></property>
+    	<property name="fundTrendDetailTbody" value="ftl/include/fundTrendDetailTbody"></property>
+    	<property name="fundTypeDetail" value="ftl/include/fundTypeDetail"></property>
+    	<property name="channelUrl" value="${get_channel_url}"></property>
+    	<property name="custUrl" value="${api_report_gmtj_cust}"></property>
+    	<property name="sjhzUrl" value="${api_report_gmtj_sjhz}"></property>
+    </bean>
+    
+</beans>

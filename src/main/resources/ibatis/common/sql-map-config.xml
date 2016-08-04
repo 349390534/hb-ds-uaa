@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" maxRequests="320" maxSessions="100"
+		maxTransactions="100" useStatementNamespaces="true" />
+
+	<sqlMap resource="ibatis/common/sqlmap_ibatis.xml" />
+	
+	<!-- 用户行为分析报告 -->
+	<sqlMap resource="ibatis/uaa/sql-map-analysis-report.xml" />
+	
+	<!-- 核心数据 -->
+	<sqlMap resource="ibatis/uaa/sql-map-analysis-coreData.xml" />
+	
+	<!-- 好买网站 -->
+	<sqlMap resource="ibatis/uaa/sql-map-analysis-howbuyWebsite.xml" />
+	
+	<!-- 数据工具-->
+	<sqlMap resource="ibatis/uaa/sql-map-analysis-dataTool.xml" />
+	
+	<!-- 角色管理-->
+	<sqlMap resource="ibatis/uaa/sql-map-role-manager.xml" />
+	
+	<!-- 权限管理-->
+	<sqlMap resource="ibatis/uaa/sql-map-permission-manager.xml" />
+	
+	<!-- 用户管理-->
+	<sqlMap resource="ibatis/uaa/sql-map-user-manager.xml" />
+	
+	<!-- 无线实时分析管理-->
+	<sqlMap resource="ibatis/uaa/sql-map-wireless.xml" />
+	
+	<!-- 活动实时分析管理-->
+<!-- 	<sqlMap resource="ibatis/uaa/sql-map-activity.xml" /> -->
+	<sqlMap resource="ibatis/uaa/sql-map-activity_new.xml" />
+	
+</sqlMapConfig>
+

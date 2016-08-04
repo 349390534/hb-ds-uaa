@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="penetrateAnalysisMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/auth/pta/*.htm">penetrateAnalysisController</prop>
+                <prop key="/auth/dcc/*.htm">disabClientConvertController</prop>
+                <prop key="/auth/dcg/*.htm">disabClientGradeController</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="penetrateAnalysisController" class="com.howbuy.uaa.web.controller.PenetrateAnalysisController" init-method="init">
+    	<property name="index" value="ftl/penetrate/penetrateAnalysis_index"></property>
+    	<property name="dataView" value="ftl/penetrate/penetrateAnalysis_data"></property>
+    	<property name="apiUrl" value="${api_admin_query}"></property>
+    </bean>
+    
+    <bean id="disabClientConvertController" class="com.howbuy.uaa.web.controller.DisabClientConvertController">
+    	<property name="index" value="ftl/penetrate/disabClientConvert_index"></property>
+    	<property name="dataView" value="ftl/penetrate/disabClientConvert_data"></property>
+    	<property name="apiUrl" value="${api_admin_query}"></property>
+    </bean>
+    
+    <bean id="disabClientGradeController" class="com.howbuy.uaa.web.controller.DisabClientGradeController">
+    	<property name="index" value="ftl/penetrate/disabClientGrade_index"></property>
+    	<property name="apiUrl" value="${api_admin_query}"></property>
+    </bean>
+    
+</beans>

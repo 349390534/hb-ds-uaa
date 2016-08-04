@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="BookerTrack">
+    <typeAlias alias="bookerTrackForm" type="com.howbuy.uaa.dto.BookerTrackForm"/>
+    <typeAlias alias="bookerPv" type="com.howbuy.uaa.persistence.BookerPv"/>
+
+    <select id="selectBookerPvs" parameterClass="java.util.Map" resultClass="bookerPv">
+    select *
+    from booker_pv t
+    where t.cookie=#cookie#
+    order by t.visitTime
+    </select>
+
+    <!--取预约当天的记录-->
+    <select id="selectBookerTrackForms" parameterClass="java.util.Map" resultClass="bookerTrackForm">
+    select a.cookie,
+       b.cookieNum,
+       a.bookTime,
+       a.phone,
+       a.pvUrl,
+       a.visitTime,
+       a.userUrl
+    from
+        (select p.cookie,
+           u.bookTime,
+           u.phone,
+           p.url pvUrl,
+           p.visitTime,
+           u.url userUrl
+        from booker_pv p
+        left join booking_user u on p.userId=u.id
+        where p.visitTime like #actionDate#||'%'  and p.cookie in(select cookie from booking_user where booktime like #actionDate#||'%')) a,
+
+        (select p.cookie, count(*) cookieNum
+           from booker_pv p
+          left join booking_user u on p.userId=u.id
+         where p.visitTime like #actionDate#||'%'   and p.cookie in(select cookie from booking_user where booktime like #actionDate#||'%')
+         group by p.cookie
+        ) b
+    where
+        a.cookie = b.cookie
+    order by
+        a.cookie, a.visittime
+    </select>
+
+    <!--预约当天浏览的第一个页面-->
+    <select id="selectBookerFirstPageForms" parameterClass="java.util.Map" resultClass="bookerTrackForm">
+    select p.cookie,
+           p.srcUrl,
+           p.url pvUrl,
+           bu.phone,
+           bu.url userUrl,
+           bu.bookTime,
+           p.srcDomain,
+           p.srcKey,
+           p.visitTime srcTime
+      from (select distinct t.cookie from booking_user t) u
+      join (select b2.*
+              from (select cookie, min(visitTime) visitTime
+                      from booker_pv b
+                     group by b.cookie) b1
+              join booker_pv b2 on b1.cookie = b2.cookie
+                               and b1.visitTime = b2.visitTime) p on u.cookie =
+                                                                     p.cookie
+      join booking_user bu on u.cookie = bu.cookie
+
+     where p.visitTime like #actionDate#||'%'
+     order by bu.bookTime
+    </select>
+
+    <!--取预约用户所有的记录-->
+    <select id="selectBookerAllTrackForms" parameterClass="java.util.Map" resultClass="bookerTrackForm">
+        select a.cookie,
+            b.cookieNum,
+            a.bookTime,
+            a.phone,
+            a.pvUrl,
+            a.visitTime,
+            a.userUrl
+        from
+                (select p.cookie,
+                     u.bookTime,
+                     u.phone,
+                     p.url pvUrl,
+                     p.visitTime,
+                     u.url userUrl
+                 from booker_pv p
+                     left join booking_user u on p.userId=u.id
+                 where p.visitTime like #actionDate#||'%') a,
+
+                (select p.cookie, count(*) cookieNum
+                 from booker_pv p
+                     left join booking_user u on p.userId=u.id
+                 where p.visitTime like #actionDate#||'%'
+                 group by p.cookie
+                ) b
+        where
+            a.cookie = b.cookie
+        order by
+            a.cookie, a.visittime
+    </select>
+
+    <select id="selectUserMaxDate" parameterClass="java.util.Map" resultClass="java.lang.String">
+      select max(booktime) from booking_user t
+    </select>
+
+    <select id="selectPvMaxDate" parameterClass="java.util.Map" resultClass="java.lang.String">
+      select max(t.visittime) from booker_pv t
+    </select>
+</sqlMap>

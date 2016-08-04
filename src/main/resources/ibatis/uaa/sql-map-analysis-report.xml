@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AnalysisReport">
+	<typeAlias alias="Channel" type="com.howbuy.uaa.persistence.Channel"/>
+	<typeAlias alias="ChannelReport" type="com.howbuy.uaa.persistence.ChannelReport"/>
+	<typeAlias alias="SubchannelReport" type="com.howbuy.uaa.persistence.SubchannelReport"/>
+	<typeAlias alias="OpenAccountDetail" type="com.howbuy.uaa.persistence.OpenAccountDetail"/>
+	<typeAlias alias="TradeDetail" type="com.howbuy.uaa.persistence.TradeDetail"/>
+	<typeAlias alias="howbuyehowbuyPVUVStat" type="com.howbuy.uaa.dto.Howbuy2EhowbuyDto"/>
+	<typeAlias alias="PVUVCounts" type="com.howbuy.uaa.dto.PVUVCounts"/>
+
+	
+	<insert id="insertChannel" parameterClass="Channel">
+	INSERT INTO channel (
+	name,
+	url_regex,
+	parent_id,
+	create_date_time
+)
+VALUES
+	(
+		#name#,
+		#urlRegex#,
+		#parentId#,
+		#createDateTime#
+	)
+	<selectKey resultClass="string" keyProperty="id">    
+	<![CDATA[SELECT LAST_INSERT_ID() AS ID ]]> <!-- 该方法LAST_INSERT_ID()与数据库连接绑定  -->  
+	</selectKey> 
+	</insert>
+	
+	<select id="queryAllChannel" resultClass="Channel">
+	SELECT
+	t.id,
+	t. NAME,
+	t.url_regex as urlRegex,
+	t.parent_id AS parentId,
+	t.create_date_time as createDateTime,
+	p. NAME AS parentName
+FROM
+	channel t
+LEFT JOIN channel p ON (p.id = t.parent_id)
+	</select>
+	
+	<insert id="batchSavingChannelReport" parameterClass="java.util.ArrayList">
+	INSERT INTO channel_report (
+	channel_id,
+	pv,
+	uv,
+	user_total,
+	to_trade_total,
+	open_account_total,
+	trade_total,
+	amount_total,
+	subscribe_total,
+	report_date_time,
+	create_date_time
+)
+VALUES
+	<iterate conjunction="," property="">
+	(
+		#[].channelId#,
+		#[].pv#,
+		#[].uv#,
+		#[].userTotal#,
+		#[].toTradeTotal#,
+		#[].openAccountTotal#,
+		#[].tradeTotal#,
+		#[].amountTotal#,
+		#[].subscribeTotal#,
+		#[].reportDateTime#,
+		#[].createDateTime#
+	)
+	</iterate>
+	</insert>
+	
+	
+	<select id="queryChannelReport" parameterClass="java.util.HashMap" resultClass="ChannelReport">
+		SELECT c.NAME as channelName,t2.*
+	FROM
+	(
+		SELECT
+			t.parent_id AS channelId,
+			SUM(t.pv) AS pv,
+			sum(t.uv) AS uv,
+			sum(t.user_total) AS userTotal,
+			sum(t.to_trade_total) AS toTradeTotal,
+			sum(t.open_account_total) AS openAccountTotal,
+			sum(t.trade_total) AS tradeTotal,
+			sum(t.amount_total) AS amountTotal,
+			sum(t.subscribe_total) AS subscribeTotal,
+			t.report_date_time AS reportDateTime,
+			t.create_date_time AS createDateTime
+		FROM
+			subchannel_report t
+		WHERE
+			t.report_date_time BETWEEN #start# and #end#
+			<isNotEmpty property = "channelId"> AND t.parent_id = #channelId#</isNotEmpty>
+		GROUP BY
+			t.parent_id,t.report_date_time
+	) t2
+LEFT JOIN channel c ON (t2.channelId = c.id) ORDER BY t2.reportDateTime DESC;
+	</select>
+	
+	<insert id="batchSavingSubchannelReport" parameterClass="java.util.ArrayList">
+	INSERT INTO subchannel_report (
+	channel_id,
+	parent_id,
+	page_url,
+	pv,
+	uv,
+	user_total,
+	to_trade_total,
+	open_account_total,
+	trade_total,
+	amount_total,
+	subscribe_total,
+	report_date_time,
+	create_date_time
+)
+VALUES
+	<iterate conjunction="," property="">
+	(
+		#[].channelId#,
+		#[].parentId#,
+		#[].pageUrl#,
+		#[].pv#,
+		#[].uv#,
+		#[].userTotal#,
+		#[].toTradeTotal#,
+		#[].openAccountTotal#,
+		#[].tradeTotal#,
+		#[].amountTotal#,
+		#[].subscribeTotal#,
+		#[].reportDateTime#,
+		#[].createDateTime#
+	)
+	</iterate>
+	</insert>
+	
+	<insert id="batchSavingHowbuy2EhowbuyStat" parameterClass="java.util.ArrayList">
+	INSERT INTO howbuy_ehowbuy_stat (
+	channel_id,
+	parent_id,
+	uv2ehowbuy,
+	pv,
+	uv,
+	howbuy_new_add_uv,
+	trade_total,
+	open_account_total,
+	page_url,
+	page_type,
+	report_date_time,
+	create_date_time
+)
+VALUES
+	<iterate conjunction="," property="">
+	(
+		#[].channelId#,
+		#[].parentId#,
+		#[].uv2ehowbuy#,
+		#[].pv#,
+		#[].uv#,
+		#[].howbuyAddedUV#,
+		#[].tradeTotal#,
+		#[].openAccountTotal#,
+		#[].pageUrl#,
+		#[].pageType#,
+		#[].reportDateTime#,
+		#[].createDateTime#
+	)
+	</iterate>
+	</insert>
+	
+	<select id="querySubChannelReport" parameterClass="java.util.HashMap" resultClass="SubchannelReport">
+		SELECT
+	t.id AS id,
+	t.channel_id AS channelId,
+	t.parent_id AS parentId,
+	c.name as channelName,
+	t.page_url AS pageUrl,
+	t.pv AS pv,
+	t.uv AS uv,
+	t.user_total AS userTotal,
+	t.to_trade_total AS toTradeTotal,
+	t.open_account_total AS openAccountTotal,
+	t.trade_total AS tradeTotal,
+	t.amount_total AS amountTotal,
+	t.subscribe_total AS subscribeTotal,
+	t.report_date_time AS reportDateTime,
+	t.create_date_time AS createDateTime
+FROM (select * from subchannel_report where parent_id = #channelId# and report_date_time BETWEEN #start# and #end#
+	<isNotEmpty property="keyword">
+	and page_url like '%$keyword$%'
+	</isNotEmpty>
+) t LEFT JOIN channel c on (t.channel_id = c.id)
+	</select>
+	
+	
+	<insert id="batchSavingOpenAcct" parameterClass="java.util.ArrayList">
+	INSERT into open_account_detail(channel_id, id_type, id_no, user_id, bank_type, bank_no, coop_id, act_id,report_date_time,create_date_time) 
+	VALUES 
+	<iterate conjunction="," property="">
+	(
+		#[].channelId#,
+		#[].idType#,
+		#[].idNo#,
+		#[].userId#,
+		#[].bankType#,
+		#[].bankNo#,
+		#[].coopId#,
+		#[].actId#,
+		#[].reportDateTime#,
+		#[].createDateTime#
+	)
+	</iterate>
+	</insert>
+	
+	<insert id="batchSavingTradeDetail" parameterClass="java.util.ArrayList">
+	INSERT into trade_detail(channel_id, url, trade_type, fund_code,fund_type,user_total,amount_total,report_date_time, create_date_time) 
+	VALUES
+	<iterate conjunction="," property="">
+	(
+		#[].channelId#,
+		#[].url#,
+		#[].tradeType#,
+		#[].fundCode#,
+		#[].fundType#,
+		#[].userTotal#,
+		#[].amountTotal#,
+		#[].reportDateTime#,
+		#[].createDateTime#
+	)
+	</iterate>
+	</insert>
+	
+	<insert id="batchSavingPVUV" parameterClass="java.util.ArrayList">
+	INSERT into channel_pv_uv(channel_id,parent_id,pv,uv,stat_datetime) 
+	VALUES
+	<iterate conjunction="," property="">
+	(
+		#[].channelID#,
+		#[].parentChannelID#,
+		#[].pv#,
+		#[].uv#,
+		#[].statDate#
+	)
+	</iterate>
+	</insert>
+	
+	<select id="queryHowbuy2EhowbuyPVUVstat" parameterClass="java.util.HashMap" resultClass="howbuyehowbuyPVUVStat">
+		SELECT t1.page_url url,t1.pv urlpv,t1.uv urluv,t1.parent_id channelID,t1.channel_id subChannelID,t1.report_date_time reportDateTime,
+		t2.pv howbuypv,t2.uv howbuyuv,t1.uv2ehowbuy ehowbuyAddeduv,t1.open_account_total acctopenNum,t1.trade_total tradeNum,t1.howbuy_new_add_uv howbuyAddedUV
+		FROM howbuy_ehowbuy_stat t1 
+		left join channel_pv_uv t2 on t1.channel_id=t2.channel_id and t1.parent_id=t2.parent_id and t1.report_date_time=t2.stat_datetime
+		where t1.report_date_time BETWEEN #start# and #end# 
+		<isNotEmpty property="channelID">
+		and t1.channel_id=#channelID#
+		</isNotEmpty>
+		<isNotEmpty property="parentChannelID">
+		and t1.parent_id=#parentChannelID#
+		</isNotEmpty>
+		<isNotEmpty property="pageType">
+		and t1.page_type=#pageType#
+		</isNotEmpty>
+		order by t1.report_date_time asc,t1.pv desc
+	</select>
+	
+	
+	<select id="queryOpenAcctDetail" parameterClass="java.util.HashMap" resultClass="OpenAccountDetail">
+		SELECT
+	t.id AS id,
+	t.channel_id AS channelId,
+	t.id_type AS idType,
+	t.id_no AS idNo,
+	t.user_id AS userId,
+	t.bank_type AS bankType,
+	t.bank_no AS bankNo,
+	t.coop_id AS coopId,
+	t.act_id AS actId,
+	t.report_date_time AS reportDateTime,
+	t.create_date_time AS createDateTime
+FROM open_account_detail t where report_date_time BETWEEN #start# and #end#
+	</select>
+	
+	<select id="queryTradeDetail" parameterClass="java.util.HashMap" resultClass="TradeDetail">
+		SELECT
+	t.id AS id,
+	t.channel_id AS channelId,
+	t.url,
+	t.trade_type AS tradeType,
+	t.fund_code AS fundCode,
+	t.fund_type AS fundType,
+	t.user_total AS userTotal,
+	t.amount_total AS amountTotal,
+	t.report_date_time AS reportDateTime,
+	t.create_date_time AS createDateTime
+FROM trade_detail t where channel_id=#channelId# and report_date_time BETWEEN #start# and #end# and url = #url#
+	</select>
+	
+	<select id="queryTradeDetailByParentChannelId" parameterClass="java.util.HashMap" resultClass="TradeDetail">
+		SELECT
+	t.id AS id,
+	t.channel_id AS channelId,
+	t.trade_type AS tradeType,
+	t.fund_code AS fundCode,
+	t.fund_type AS fundType,
+	t.user_total AS userTotal,
+	t.amount_total AS amountTotal,
+	t.report_date_time AS reportDateTime,
+	t.create_date_time AS createDateTime
+FROM trade_detail t where channel_id in (select id from channel where parent_id = #channelId#) and report_date_time BETWEEN #start# and #end#
+	</select>
+	
+	<select id="queryCountsGroupBy_Channel_Subchannel" parameterClass="java.util.HashMap" resultClass="PVUVCounts">
+		SELECT sum(pv) pvs,sum(uv) uvs from howbuy_ehowbuy_stat 
+		where channel_id=#channelId# and parent_id=#parentId# 
+		and report_date_time between #start# and #end# 
+		and page_type=#pageType#
+		group by channel_id,parent_id
+	</select>
+	
+	<insert id="batchInsertHowbuy2EhowbuyIntervalStat" parameterClass="java.util.ArrayList">
+	INSERT INTO howbuy_ehowbuy_interval_stat (
+	howbuy_new_uv_date,
+	intervals,
+	action_type,
+	count,
+	channel,
+	subchannel
+	)
+	VALUES
+	<iterate conjunction="," property="">
+	(
+		#[].startDate#,
+		#[].intervals#,
+		#[].actiontype#,
+		#[].count#,
+		#[].channel#,
+		#[].subchannel#
+	)
+	</iterate>
+	</insert>
+	
+	
+	<select id="queryHowbuy2EhowbuyIntervals" parameterClass="java.util.HashMap" resultClass="howbuyehowbuyPVUVStat">
+	select 
+	estat.report_date_time as reportDateTime,cpu.pv as howbuypv,cpu.uv as howbuyuv,estat.openaccttotal as acctopenNum,
+	estat.tradetotal as tradeNum,estat.howbuy_newadduv as howbuyAddedUV,estat.ehowbuy_newadduv as ehowbuyAddeduv,
+	interp.acctopen410days as openAcct10days,interp.trade410days as trade10days,
+	interp.acctopen430days as openAcct30days,interp.trade430days as trade30days
+	FROM
+	(SELECT estat.report_date_time,estat.parent_id,estat.channel_id,SUM(estat.open_account_total) openaccttotal,SUM(estat.trade_total) tradetotal
+	,sum(estat.howbuy_new_add_uv) howbuy_newadduv,SUM(estat.uv2ehowbuy) ehowbuy_newadduv
+	FROM howbuy_ehowbuy_stat estat
+	where estat.channel_id=#subchannelId# AND estat.parent_id=#channelId#
+	AND estat.report_date_time between #start# and #end#
+	AND estat.page_type='2' 
+	GROUP BY estat.channel_id,estat.parent_id,estat.report_date_time) estat
+	left join
+	(SELECT pp.howbuy_new_uv_date,pp.channel,pp.subchannel,
+	sum(pp.10acctopenNum) acctopen410days,sum(pp.10tradeNum) trade410days,
+	sum(pp.30acctopenNum) acctopen430days,sum(pp.30tradeNum) trade430days
+	from
+	(SELECT
+		howbuy_new_uv_date,channel,subchannel,
+		CASE  WHEN intervals='10' and action_type='4' THEN count ELSE 0 end AS 10acctopenNum,
+		CASE  WHEN intervals='10' and action_type='6' THEN count ELSE 0 end AS 10tradeNum,
+		CASE  WHEN intervals='30' and action_type='4' THEN count ELSE 0 end AS 30acctopenNum,
+		CASE  WHEN intervals='30' and action_type='6' THEN count ELSE 0 end AS 30tradeNum
+		FROM howbuy_ehowbuy_interval_stat
+	) pp group by pp.howbuy_new_uv_date,pp.channel,pp.subchannel
+	) interp  
+	ON interp.howbuy_new_uv_date=estat.report_date_time and interp.channel=estat.parent_id and interp.subchannel=estat.channel_id
+	JOIN 
+	channel_pv_uv cpu ON estat.report_date_time=cpu.stat_datetime and estat.parent_id=cpu.parent_id and estat.channel_id=cpu.channel_id
+	</select>
+	
+</sqlMap>

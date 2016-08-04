@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="BookerPvStat">
+    <typeAlias alias="bookerPvStatForm" type="com.howbuy.uaa.dto.BookerPvStatForm"/>
+    <select id="selectHistoryBookerPvStatForms" parameterClass="java.util.Map" resultClass="bookerPvStatForm">
+        select *
+  from (select rownum as channelrownum, c.*
+          from (select channel, sum(pv) as channelpv
+                  from booker_pv_stat t1
+                  where t1.statdate <![CDATA[ <= ]]> #statDate#
+                 group by channel
+                 order by channelpv desc) c) a
+  right join (select rownum as subchannelrownum, d.*
+               from (select subchannel as subchannel,
+                            sum(pv) as subchannelpv
+                       from booker_pv_stat t2
+                       where t2.statdate <![CDATA[ <= ]]> #statDate#
+                      group by subchannel
+                      order by subchannelpv desc) d) b on a.channelrownum = b.subchannelrownum order by b.subchannelpv desc
+	</select>
+
+    <select id="selectMonthBookerPvStatForms" parameterClass="java.util.Map" resultClass="bookerPvStatForm">
+        select *
+          from (select rownum as channelrownum, c.*
+                  from (select channel, sum(pv) as channelpv
+                          from booker_pv_stat t1
+                         where t1.statdate like #statMonth#||'%'
+                         group by channel
+                         order by channelpv desc) c) a
+          right join (select rownum as subchannelrownum, d.*
+                       from (select subchannel as subchannel,
+                                    sum(pv) as subchannelpv
+                               from booker_pv_stat t2
+                              where t2.statdate like #statMonth#||'%'
+                              group by subchannel
+                              order by subchannelpv desc) d) b on a.channelrownum = b.subchannelrownum order by b.subchannelpv desc
+	</select>
+
+    <select id="selectMaxDate" parameterClass="java.util.Map" resultClass="java.lang.String">
+      select max(statdate) from booker_pv_stat
+    </select>
+</sqlMap>
